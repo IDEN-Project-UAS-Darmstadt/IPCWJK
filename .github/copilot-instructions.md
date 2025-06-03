@@ -17,7 +17,7 @@ be met in the code, documentation, and tests in every file.
 We never want to use "can't" for example, always use "can not" instead.
 We do not use contractions in the documentation or code comments. Make
 sure word usage is consistent throughout the package. 
-Make sure consistency is also achived across the package in different files.
+Make sure consistency is also achieved across the package in different files.
 This includes parameter descriptions, which share the same meaning.
 
 We use the packages given in the DESCRIPTION file for development.
