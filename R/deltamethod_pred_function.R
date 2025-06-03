@@ -124,17 +124,13 @@ deltamethod_pred_function <- function(
     prediction_grad <- attr(prediction, "gradient")
     attr(prediction, "gradient") <- NULL
     ses <- sqrt(diag(prediction_grad %*% coef_cov_new %*% t(prediction_grad)))
-    c(
-      "prediction" = prediction, "lower" = prediction - z * ses,
-      "upper" = prediction + z * ses, "se" = ses
-    )
+    c("prediction" = prediction, "se" = ses)
   }
 
   prediction_fun_df <- function(df, z = 1.96) {
     preds <- apply(df, 1, prediction_fun, z = z)
-    preds <- t(preds)
-    # has columns: prediction, lower, upper, se
-    as.data.frame(preds)
+    preds <- as.data.frame(t(preds))
+    wald_logit(preds$prediction, z, preds$se)
   }
   return(prediction_fun_df)
 }
