@@ -69,9 +69,9 @@
 <p>You can install the development version of IPCWJK like so:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># With remotes</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span>
 <span><span class="co"># With pak (recommended for speed)</span></span>
-<span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pkg_install</span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -91,14 +91,14 @@
 <p>then use everything available in the <code>devtools</code> package to develop the package.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
-<span><span class="fu">document</span><span class="op">(</span><span class="op">)</span> <span class="co"># to update documentation and roxygen functionality</span></span>
-<span><span class="fu">load_all</span><span class="op">(</span><span class="op">)</span> <span class="co"># to load the package functions for development</span></span>
-<span><span class="fu">build_readme</span><span class="op">(</span><span class="op">)</span> <span class="co"># to update the README</span></span>
-<span><span class="fu">test</span><span class="op">(</span><span class="op">)</span> <span class="co"># to run tests</span></span>
-<span><span class="fu">check</span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the package</span></span>
-<span><span class="fu">covr</span><span class="fu">::</span><span class="fu">package_coverage</span><span class="op">(</span><span class="op">)</span> <span class="co"># to check code coverage</span></span>
-<span><span class="fu">styler</span><span class="fu">::</span><span class="fu">style_pkg</span><span class="op">(</span><span class="op">)</span> <span class="co"># to style the code</span></span>
-<span><span class="fu">lint</span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the code for linting issues</span></span></code></pre></div>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">document</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to update documentation and roxygen functionality</span></span>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/load_all.html" class="external-link">load_all</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to load the package functions for development</span></span>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/build_rmd.html" class="external-link">build_readme</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to update the README</span></span>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to run tests</span></span>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/check.html" class="external-link">check</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the package</span></span>
+<span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check code coverage</span></span>
+<span><span class="fu">styler</span><span class="fu">::</span><span class="fu"><a href="https://styler.r-lib.org/reference/style_pkg.html" class="external-link">style_pkg</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to style the code</span></span>
+<span><span class="fu"><a href="https://devtools.r-lib.org/reference/lint.html" class="external-link">lint</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the code for linting issues</span></span></code></pre></div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
