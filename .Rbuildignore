@@ -1,0 +1,11 @@
+^renv$
+^renv\.lock$
+^LICENSE\.md$
+^\.helper$
+^\.lintr$
+^pkgdown$
+^_pkgdown\.yml$
+^docs$
+^\.renvignore$
+^\.github$
+^README\.Rmd$
