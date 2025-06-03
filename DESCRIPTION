@@ -1,0 +1,30 @@
+Package: IPCWJK
+Title: IPCW Jackknife Methods for Standard Errors in Survival Prediction
+Version: 0.0.0.9000
+Authors@R: c(
+    person("Antje", "Jahn-Eimermacher", role = "aut"),
+    person("Lukas", "Klein", email = "lukas.klein@h-da.de", role = c("aut", "cre")))
+Description: Provides functions for fitting binary classification models with
+ inverse probability of censoring weights (IPCW) to estimate survival 
+ probabilities, and implements Jackknife resampling methods for unbiased 
+ prediction error estimation in survival analysis. The package supports model 
+ fitting, IPCW calculation, and Jackknife error estimation.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+RdMacros: mathjaxr, Rdpack
+Imports: pec, xgboost, mathjaxr, Rdpack, prodlim, Hmisc
+Suggests: 
+    testthat (>= 3.0.0),
+    lintr,
+    spelling,
+    knitr,
+    rmarkdown,
+    survival,
+    flexsurv,
+    mets
+Config/testthat/edition: 3
+Language: en-US
+BuildManual: TRUE
+VignetteBuilder: knitr

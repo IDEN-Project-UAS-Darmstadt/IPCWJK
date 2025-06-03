@@ -1,0 +1,201 @@
+---
+description: "Doing Survival Analysis with Binary Classifiers using IPCW"
+title: "IPCW Models for Survival Analysis"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{IPCW Models for Survival Analysis}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+We create the data with a similar structure to the one used in the paper.
+
+```{r data}
+# For rllogis:
+library(flexsurv)
+set.seed(123)
+
+# 0.27 for 50% censoring rate
+lambda_c <- 0.10 # ~ 25% censoring rate
+b0 <- 1
+b1 <- -0.5
+b2 <- 0.5
+shape <- 1
+tau <- 5
+n <- 500
+
+x1 <- rbinom(n, 1, 0.5)
+x1 <- x1 - 1 * (x1 == 0)
+x2 <- rbinom(n, 1, 0.5)
+scalevec <- exp(b0 + x1 * b1 + x2 * b2)
+t.star <- rllogis(n, shape = shape, scale = scalevec)
+cens <- rexp(n, lambda_c)
+delta <- 1 * (t.star <= cens)
+t <- pmin(t.star, cens)
+df <- data.frame(t, delta, x1, x2)
+
+test_data <- data.frame(x1 = c(1, 1), x2 = c(1, 0))
+test_data_true_probs <- 1 - pllogis(tau,
+  shape = shape,
+  scale = exp(b0 + test_data$x1 * b1 + test_data$x2 * b2)
+)
+```
+
+```{r ipcw_data}
+library(IPCWJK)
+
+w <- ipcw_weights(df, tau, time_var = "t", status_var = "delta")
+hist(w,
+  breaks = 30, main = "Histogram of IPCW Weights",
+  xlab = "IPCW Weight", col = "lightblue", border = "grey"
+)
+```
+
+## Parametric Model
+
+We can model the data with a parametric survival model for example.
+
+```{r parametric_model}
+library(survival)
+parmmodel <- survreg(Surv(t, delta) ~ x1 + x2, data = df, dist = "loglogistic")
+parmmodel_pred <- deltamethod_from_model(parmmodel, tau)
+
+
+y <- 1 * (df$t > tau)
+pred <- parmmodel_pred(df)$prediction
+# This is ok, as the censored observations before tau are not used
+parmmodel_train_brier <- sum(w * (pred - y)**2) / sum(w)
+
+parmmodel
+```
+
+Based on the model we can predict the survival probability at $\tau$ 
+and get the standard error of the prediction using the delta method.
+
+```{r parametric_prediction}
+parmmodel_predictions <- parmmodel_pred(test_data)
+
+parmmodel_predictions
+```
+
+## IPCW XGBoost Model
+
+```{r xgboost_model}
+xgbmodel <- ipcw_xgboost(df, tau,
+  time_var = "t",
+  status_var = "delta", verbose = 0
+)
+
+xgb_train_brier <- sum(w * (predict(xgbmodel, df)$prediction - y)**2) / sum(w)
+
+xgbmodel
+```
+
+
+```{r xgboost_prediction}
+xgbmodel_predictions <- predict(xgbmodel, test_data)
+xgbmodel_predictions
+```
+
+## Logistic Regression Model with logitIPCW
+
+```{r logitIPCW_model}
+library(mets)
+logitipcw_m <- logitIPCW(Event(t, delta) ~ x1 + x2, time = tau, data = df)
+
+logitipcw_pred_corre <- deltamethod_from_model(logitipcw_m, tau)
+logitipcw_pred_naive <- deltamethod_from_model(logitipcw_m, tau, naive = TRUE)
+
+pred <- logitipcw_pred_corre(df)$prediction
+logitipcw_train_brier <- sum(w * (pred - y)^2) / sum(w)
+
+logitipcw_m
+```
+
+
+```{r logitIPCW_model_prediction}
+logitipcw_predictions_corre <- logitipcw_pred_corre(test_data)
+logitipcw_predictions_corre
+logitipcw_predictions_naive <- logitipcw_pred_naive(test_data)
+logitipcw_predictions_naive
+```
+
+## Logistic Regression Model with IPCW
+
+```{r ipcw_logistic_regression_model}
+logreg <- ipcw_logistic_regression(df, tau,
+  time_var = "t",
+  status_var = "delta"
+)
+
+logreg_train_brier <- sum(w * (predict(logreg, df)$prediction - y)**2) / sum(w)
+
+logreg
+```
+
+
+```{r ipcw_logistic_regression_prediction}
+logreg_predictions <- predict(logreg, test_data)
+logreg_predictions
+```
+
+## Comparison (XGBoost vs Parametric only for now)
+
+```{r brier_scores}
+brier_scores <- data.frame(
+  Model = c("Parametric", "XGBoost"),
+  Brier_Score = c(parmmodel_train_brier, xgb_train_brier)
+)
+
+barplot(
+  brier_scores$Brier_Score,
+  names.arg = brier_scores$Model,
+  main = "Brier Scores by Model",
+  ylab = "Brier Score"
+)
+```
+
+```{r predictions_comparison_test_data1}
+for (i in seq_len(nrow(test_data))) {
+  true_prob <- test_data_true_probs[i]
+  predictions_comparison <- data.frame(
+    Model = c("Parametric", "XGBoost"),
+    Prediction = c(
+      parmmodel_predictions[i, "Prediction"],
+      xgbmodel_predictions[i, "prediction"]
+    )
+  )
+
+  if (i == 1) {
+    par(mfrow = c(1, nrow(test_data)))
+  }
+
+  barplot(
+    predictions_comparison$Prediction,
+    names.arg = predictions_comparison$Model,
+    main = paste("Test Case", i),
+    ylab = "Predicted Probability",
+    ylim = c(0, 1)
+  )
+  abline(h = true_prob, col = "red", lwd = 2)
+  legend(
+    "topright",
+    legend = paste("True Probability =", round(true_prob, 3)),
+    col = "red",
+    lwd = 2,
+    bty = "n"
+  )
+
+  # Reset plotting area after last plot
+  if (i == nrow(test_data)) {
+    par(mfrow = c(1, 1))
+  }
+}
+```

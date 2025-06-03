@@ -1,0 +1,23 @@
+url: ~
+template:
+  bootstrap: 5
+  math-rendering: mathjax
+reference:
+- title: Helpers
+  desc:  Helper functions exported from the package.
+- contents:
+  - has_concept("helpers")
+- title: IPCW Models
+  desc:  Binary classifiers for survival prediction using inverse probability of censoring weights (IPCW).
+- contents:
+  - has_concept("ipcwmodels")
+- title: IPCW Base Class
+  desc:  Base class for IPCW models.
+- contents:
+  - has_concept("ipcwbaseclass")
+repo:
+  url:
+    home: https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK
+    source: https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK/blob/HEAD/
+    issue: https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK/issues/
+    user: https://github.com/
