@@ -43,6 +43,9 @@
 #' @param fixed_vars List. Named list of fixed values for variables used in the
 #'   prediction formula but not present in the new data (default is an empty
 #'   list).
+#' @param logit Logical. If \code{TRUE}, the delta method is used on the
+#'        logit scale. This ensures CIs are between 0 and 1 (default is
+#'        \code{TRUE}).
 #' @return A function that takes a data frame of covariates and returns a
 #'   data frame with columns for the prediction, lower and upper Wald
 #'   confidence intervals, and standard error. The function can also take
@@ -70,7 +73,8 @@ deltamethod_pred_function <- function(
     coefs,
     coef_cov,
     additional_coefs = character(),
-    fixed_vars = list()) {
+    fixed_vars = list(),
+    logit = FALSE) {
   coef_names <- names(coefs)
   if (!all(additional_coefs %in% coef_names)) {
     stop("additional_coefs must be a subset of the names of coefs")
@@ -124,17 +128,13 @@ deltamethod_pred_function <- function(
     prediction_grad <- attr(prediction, "gradient")
     attr(prediction, "gradient") <- NULL
     ses <- sqrt(diag(prediction_grad %*% coef_cov_new %*% t(prediction_grad)))
-    c(
-      "prediction" = prediction, "lower" = prediction - z * ses,
-      "upper" = prediction + z * ses, "se" = ses
-    )
+    c("prediction" = prediction, "se" = ses)
   }
 
   prediction_fun_df <- function(df, z = 1.96) {
     preds <- apply(df, 1, prediction_fun, z = z)
-    preds <- t(preds)
-    # has columns: prediction, lower, upper, se
-    as.data.frame(preds)
+    preds <- as.data.frame(t(preds))
+    wald(preds$prediction, z, preds$se, logit = logit)
   }
   return(prediction_fun_df)
 }

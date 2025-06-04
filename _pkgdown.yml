@@ -3,9 +3,10 @@ template:
   bootstrap: 5
   math-rendering: mathjax
 reference:
-- title: Helpers
-  desc:  Helper functions exported from the package.
+- title: Package and Helpers
+  desc: The package itself and helpers
 - contents:
+  - IPCWJK-package
   - has_concept("helpers")
 - title: IPCW Models
   desc:  Binary classifiers for survival prediction using inverse probability of censoring weights (IPCW).

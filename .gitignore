@@ -1,0 +1,6 @@
+docs
+inst/doc
+.RData
+.Rhistory
+.helper
+.DS_Store

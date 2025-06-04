@@ -1,0 +1,93 @@
+#on:
+  push:
+    branches: [main, dev]
+
+name: release.yaml
+
+permissions:
+  packages: write
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-tinytex@v2
+        env:
+          # install full prebuilt version
+          TINYTEX_INSTALLER: TinyTeX
+      - uses: r-lib/actions/setup-renv@v2
+      - name: build
+        run: |
+          Rscript -e 'renv::status()'
+          mkdir art
+          tlmgr update --self
+          tlmgr install makeindex titling framed inconsolata collection-fontsrecommended
+          Rscript -e 'devtools::build(path="art")'
+          Rscript -e "renv::install('.')"
+          Rscript -e 'x <- callr::rcmd("Rd2pdf", cmdargs=c("--force","--output=art/IPCW.pdf", "--no-clean", "."), show=TRUE, stderr = "2>&1")' 
+      - name: version
+        run: |
+           echo "version=$(awk -F': ' '/^Version:/ {print $2}' DESCRIPTION)" >> $GITHUB_OUTPUT
+        id: version
+      - name: tagname
+        run: |
+           echo "name=v${TAGNAME}${SUFFIX}" >> $GITHUB_OUTPUT
+        env:
+          TAGNAME: ${{steps.version.outputs.version}}
+          SUFFIX: ${{ (github.head_ref || github.ref_name ) != 'main' && '_dev' || '' }}
+        id: tagname
+      - name: Create tag
+        uses: actions/github-script@v5
+        env:
+          TAGNAME: "${{steps.tagname.outputs.name}}"
+        with:
+          script: |
+            const title = process.env.TAGNAME;
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/${title}`,
+              sha: context.sha
+            }).catch(err => {
+             if (err.status !== 422) throw err;
+              github.rest.git.updateRef({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               ref: `tags/${title}`,
+               sha: context.sha
+              });
+             })
+      - name: extract-changelog
+        id: extract-changelog
+        uses: sean0x42/markdown-extract@v2.1.0
+        with:
+          file: NEWS.md
+          pattern: ${{ (github.head_ref || github.ref_name ) == 'main' && steps.version.outputs.version || 'development' }}
+      - name: Write output to file
+        run: |
+          printf '${{ steps.extract-changelog.outputs.markdown }}' > CHANGELOG-extracted.txt
+          cat CHANGELOG-extracted.txt
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: "CHANGELOG-extracted.txt"
+          prerelease: ${{ (github.head_ref || github.ref_name ) != 'main'}}
+          tag_name: ${{ steps.tagname.outputs.name  }}
+          name: "${{steps.tagname.outputs.name}}"
+          fail_on_unmatched_files: True
+          files: |
+            art/*.tar.gz
+            art/*.pdf
+      

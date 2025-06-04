@@ -9,7 +9,8 @@ deltamethod_pred_function(
   coefs,
   coef_cov,
   additional_coefs = character(),
-  fixed_vars = list()
+  fixed_vars = list(),
+  logit = FALSE
 )
 }
 \arguments{
@@ -32,6 +33,10 @@ the prediction formula (default is an empty character vector).}
 \item{fixed_vars}{List. Named list of fixed values for variables used in the
 prediction formula but not present in the new data (default is an empty
 list).}
+
+\item{logit}{Logical. If \code{TRUE}, the delta method is used on the
+logit scale. This ensures CIs are between 0 and 1 (default is
+\code{TRUE}).}
 }
 \value{
 A function that takes a data frame of covariates and returns a
