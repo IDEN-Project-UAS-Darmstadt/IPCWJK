@@ -27,13 +27,10 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-```{r, echo = FALSE, output = "asis"}
+```{r, echo = FALSE, results = "asis", comment=""}
 descr <- packageDescription("IPCWJK")
 cat(descr$Title)
-```
-
-```{r, echo = FALSE, output = "asis"}
-descr <- packageDescription("IPCWJK")
+cat("\n\n")
 cat(descr$Description)
 ```
 
