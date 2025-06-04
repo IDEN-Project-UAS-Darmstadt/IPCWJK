@@ -24,7 +24,7 @@ jobs:
           Rscript -e 'build(path="art")'
           Rscript -e 'build_manual(path="art")'
       - name: version
-        run: echo "::set-output name=version::$(awk -F': ' '/^Version:/ {print $2}' DESCRIPTION)"
+        run: echo "version=$(awk -F': ' '/^Version:/ {print $2}' DESCRIPTION)" >> $GITHUB_OUTPUT
         id: version
       - name: extract-changelog
         id: extract-changelog
