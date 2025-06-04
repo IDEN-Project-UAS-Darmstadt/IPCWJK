@@ -32,6 +32,7 @@ prediction function, training Brier score, and metadata about the model."></head
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/ipcw_models.html">IPCW Models for Survival Analysis</a></li>
   </ul></li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
@@ -72,7 +73,7 @@ prediction function, training Brier score, and metadata about the model.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'ipcwmodel'</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, naive <span class="op">=</span> <span class="cn">FALSE</span>, wald <span class="op">=</span> <span class="cn">FALSE</span>, z <span class="op">=</span> <span class="fl">1.96</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, <span class="va">newdata</span>, naive <span class="op">=</span> <span class="cn">FALSE</span>, z <span class="op">=</span> <span class="fl">1.96</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -141,17 +142,9 @@ are to be made.</p></dd>
 estimator. If <code>FALSE</code>, use the IPCW-weighted estimator.</p></dd>
 
 
-<dt id="arg-wald">wald<a class="anchor" aria-label="anchor" href="#arg-wald"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, compute confidence intervals using the
-Wald approach (normal approximation). If <code>FALSE</code>, use weighted
-quantiles of the jackknife predictions.</p></dd>
-
-
 <dt id="arg-z">z<a class="anchor" aria-label="anchor" href="#arg-z"></a></dt>
 <dd><p>Numeric. The z-score to use for the confidence interval.
-Default is 1.96, corresponding to a 95% confidence interval. For the
-non-Wald approach, this is is converted to quantiles of the
-empirical distribution of the jackknife predictions.</p></dd>
+Default is 1.96, corresponding to a 95% confidence interval.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -172,13 +165,8 @@ confidence intervals, and standard error.</p>
 the naive approach (using the number of jackknife models minus one as the
 denominator) or the robust approach (using the IPCW weights). This
 is controlled by the <code>naive</code> argument in the <code>predict</code> method.</p>
-<p>The confidence intervals then can either be computed using the Wald
-approach (using a z-score, default is 1.96 for 95% CI) or using quantiles
-of the jackknife predictions (default). This is controlled by the <code>wald</code>
-argument in the <code>predict</code> method. The quantiles are computed using
-<code><a href="https://rdrr.io/pkg/Hmisc/man/wtd.stats.html" class="external-link">Hmisc::wtd.quantile</a></code> function, which allows for weighted quantiles.
-The weights are either the IPCW weights or the naive weights, depending on
-the <code>naive</code> argument.</p>
+<p>The confidence intervals then are computed using the Wald
+approach (using a z-score, default is 1.96 for 95% CI).</p>
     </div>
     <div class="section level2">
     <h2 id="methods-by-generic-">Methods (by generic)<a class="anchor" aria-label="anchor" href="#methods-by-generic-"></a></h2>

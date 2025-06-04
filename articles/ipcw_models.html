@@ -44,6 +44,7 @@
 <li><a class="dropdown-item" href="../articles/ipcw_models.html">IPCW Models for Survival Analysis</a></li>
   </ul>
 </li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -189,8 +190,8 @@ prediction using the delta method.</p>
 <code class="sourceCode R"><span><span class="va">xgbmodel_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgbmodel</span>, <span class="va">test_data</span><span class="op">)</span></span>
 <span><span class="va">xgbmodel_predictions</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3047837 0.2975973 0.3074719 0.04068547</span></span>
-<span><span class="co">#&gt; 2  0.1688837 0.1621815 0.1700983 0.02665202</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.3047837 0.2313039 0.3897704 0.04068547</span></span>
+<span><span class="co">#&gt; 2  0.1688837 0.1228487 0.2276913 0.02665202</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="logistic-regression-model-with-logitipcw">Logistic Regression Model with logitIPCW<a class="anchor" aria-label="anchor" href="#logistic-regression-model-with-logitipcw"></a>
@@ -261,8 +262,8 @@ prediction using the delta method.</p>
 <code class="sourceCode R"><span><span class="va">logreg_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">test_data</span><span class="op">)</span></span>
 <span><span class="va">logreg_predictions</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3063786 0.2991147 0.3090908 0.04116160</span></span>
-<span><span class="co">#&gt; 2  0.1593662 0.1521812 0.1605104 0.02784626</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.3063786 0.2320556 0.3923443 0.04116160</span></span>
+<span><span class="co">#&gt; 2  0.1593662 0.1120122 0.2217405 0.02784626</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="comparison-xgboost-vs-parametric-only-for-now">Comparison (XGBoost vs Parametric only for now)<a class="anchor" aria-label="anchor" href="#comparison-xgboost-vs-parametric-only-for-now"></a>
