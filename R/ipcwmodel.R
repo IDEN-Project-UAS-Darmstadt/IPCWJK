@@ -163,5 +163,5 @@ predict.ipcwmodel <- function(object, newdata, naive = FALSE,
     weights <- ifelse(object$w == 0, 0, 1 - object$w)
   }
   se <- sqrt(rowSums(weights * jk_dev))
-  wald_logit(pred, z, se)
+  wald(pred, z, se, logit = TRUE)
 }

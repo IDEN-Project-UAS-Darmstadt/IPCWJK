@@ -29,17 +29,17 @@ knitr::opts_chunk$set(
 
 ```{r, echo = FALSE, output = "asis"}
 descr <- packageDescription("IPCWJK")
-descr$Title
+cat(descr$Title)
 ```
 
 ```{r, echo = FALSE, output = "asis"}
 descr <- packageDescription("IPCWJK")
-descr$Description
+cat(descr$Description)
 ```
 
 The documentation is available at 
-[https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK](
-  https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK)
+[https://iden-project-uas-darmstadt.github.io/IPCWJK/](
+  https://iden-project-uas-darmstadt.github.io/IPCWJK/)
 
 ## Installation
 
@@ -61,6 +61,7 @@ df <- veteran[, c("time", "status", "trt")]
 newdata <- data.frame(trt = c(1, 2))
 
 # Calculation of IPCW weights at tau
+library(IPCWJK)
 w <- ipcw_weights(df, tau, time_var = "time", status_var = "status")
 hist(w,
   breaks = 30,
@@ -68,7 +69,7 @@ hist(w,
 )
 ```
 
-```{r data_weights}
+```{r models}
 # Fit a log-logistic survival model
 survreg_fit <- survreg(Surv(time, status) ~ trt,
   data = df,
