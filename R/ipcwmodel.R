@@ -17,13 +17,8 @@
 #' denominator) or the robust approach (using the IPCW weights). This
 #' is controlled by the \code{naive} argument in the \code{predict} method.
 #'
-#' The confidence intervals then can either be computed using the Wald
-#' approach (using a z-score, default is 1.96 for 95% CI) or using quantiles
-#' of the jackknife predictions (default). This is controlled by the \code{wald}
-#' argument in the \code{predict} method. The quantiles are computed using
-#' \code{Hmisc::wtd.quantile} function, which allows for weighted quantiles.
-#' The weights are either the IPCW weights or the naive weights, depending on
-#' the \code{naive} argument.
+#' The confidence intervals then are computed using the Wald
+#' approach (using a z-score, default is 1.96 for 95% CI).
 #'
 #' @param model_name Character. The name of the model.
 #' @param full_model The fitted model object for the full dataset.
@@ -115,18 +110,12 @@ print.ipcwmodel <- function(x, ...) {
 #'   are to be made.
 #' @param naive Logical. If \code{TRUE}, use the naive jackknife variance
 #'   estimator. If \code{FALSE}, use the IPCW-weighted estimator.
-#' @param wald Logical. If \code{TRUE}, compute confidence intervals using the
-#'   Wald approach (normal approximation). If \code{FALSE}, use weighted
-#'   quantiles of the jackknife predictions.
 #' @param z Numeric. The z-score to use for the confidence interval.
-#'   Default is 1.96, corresponding to a 95% confidence interval. For the
-#'   non-Wald approach, this is is converted to quantiles of the
-#'   empirical distribution of the jackknife predictions.
+#'   Default is 1.96, corresponding to a 95% confidence interval.
 #' @param ... Additional arguments (currently ignored).
-#' @importFrom Hmisc wtd.quantile
 #' @importFrom stats pnorm
 #' @describeIn ipcwmodel Predict method for \code{ipcwmodel} objects.
-predict.ipcwmodel <- function(object, newdata, naive = FALSE, wald = FALSE,
+predict.ipcwmodel <- function(object, newdata, naive = FALSE,
                               z = 1.96, ...) {
   if (missing(newdata)) {
     stop("Argument 'newdata' is required for prediction.")
@@ -137,10 +126,6 @@ predict.ipcwmodel <- function(object, newdata, naive = FALSE, wald = FALSE,
   # Check 'naive' argument
   if (!is.logical(naive) || length(naive) != 1 || is.na(naive)) {
     stop("Argument 'naive' must be a single logical value (TRUE or FALSE).")
-  }
-  # Check 'wald' argument
-  if (!is.logical(wald) || length(wald) != 1 || is.na(wald)) {
-    stop("Argument 'wald' must be a single logical value (TRUE or FALSE).")
   }
   # Check 'z' argument
   if (!is.numeric(z) || length(z) != 1 || is.na(z) || z <= 0) {
@@ -178,29 +163,5 @@ predict.ipcwmodel <- function(object, newdata, naive = FALSE, wald = FALSE,
     weights <- ifelse(object$w == 0, 0, 1 - object$w)
   }
   se <- sqrt(rowSums(weights * jk_dev))
-
-  if (wald) {
-    lower <- pred - z * se
-    upper <- pred + z * se
-  } else {
-    # convert z to quantiles of the normal distribution
-    p <- pnorm(z * c(-1, 1))
-    qs <- matrix(NA, nrow = n_preds, ncol = 2)
-    for (i in seq_len(n_preds)) {
-      qs[i, ] <- Hmisc::wtd.quantile(preds[i, ],
-        weights = weights, probs = p,
-        normwt = TRUE
-      )
-    }
-    lower <- qs[, 1]
-    upper <- qs[, 2]
-  }
-
-  # has columns: prediction, lower, upper, se
-  data.frame(
-    prediction = pred,
-    lower = lower,
-    upper = upper,
-    se = se
-  )
+  wald(pred, z, se, logit = TRUE)
 }

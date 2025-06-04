@@ -1,0 +1,54 @@
+on:
+  push:
+    branches: [main, master]
+
+name: release.yaml
+
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-pandoc@v2
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          use-public-rspm: true
+      - uses: r-lib/actions/setup-tinytex@v2
+      - uses: r-lib/actions/setup-renv@v2
+      - name: build
+        run: |
+          mkdir art
+          Rscript -e 'build(path="art")'
+          Rscript -e 'build_manual(path="art")'
+      - name: version
+        run: echo "::set-output name=version::$(awk -F': ' '/^Version:/ {print $2}' DESCRIPTION)"
+        id: version
+      - name: extract-changelog
+        id: extract-changelog
+        uses: sean0x42/markdown-extract@v4
+        env:
+          toextract: ${{ github.ref_type == 'tag' && steps.version.outputs.version || 'development version' }}
+        with:
+          file: NEWS.md
+          pattern: '${{toextract}}'
+      - name: Write output to file
+        run: |
+          printf '${{ steps.extract-changelog.outputs.markdown }}' > CHANGELOG-extracted.txt
+          cat CHANGELOG-extracted.txt
+      - name: Pre Release
+        uses: softprops/action-gh-release@v2
+        permissions:
+          packages: write
+          contents: write
+        with:
+          body_path: "CHANGELOG-extracted.txt"
+          prerelease: ${{ github.ref_type != 'tag'}}
+          name: ${{ github.ref_type == 'tag' && steps.version.outputs.version || 'devel' }}
+          fail_on_unmatched_files: True
+          files: |
+            art/*.tar.gz
+            art/*.pdf
+      

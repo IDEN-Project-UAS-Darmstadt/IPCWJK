@@ -27,7 +27,19 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of IPCWJK is to ...
+```{r, echo = FALSE, output = "asis"}
+descr <- packageDescription("IPCWJK")
+cat(descr$Title)
+```
+
+```{r, echo = FALSE, output = "asis"}
+descr <- packageDescription("IPCWJK")
+cat(descr$Description)
+```
+
+The documentation is available at 
+[https://iden-project-uas-darmstadt.github.io/IPCWJK/](
+  https://iden-project-uas-darmstadt.github.io/IPCWJK/)
 
 ## Installation
 
@@ -42,13 +54,48 @@ pak::pkg_install("IDEN-Project-UAS-Darmstadt/IPCWJK")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+```{r data_weights}
+library(survival)
+tau <- 80
+df <- veteran[, c("time", "status", "trt")]
+newdata <- data.frame(trt = c(1, 2))
 
-```{r example}
+# Calculation of IPCW weights at tau
 library(IPCWJK)
-## basic example code
+w <- ipcw_weights(df, tau, time_var = "time", status_var = "status")
+hist(w,
+  breaks = 30,
+  xlab = "IPCW Weight", col = "lightblue", border = "grey"
+)
 ```
 
+```{r models}
+# Fit a log-logistic survival model
+survreg_fit <- survreg(Surv(time, status) ~ trt,
+  data = df,
+  dist = "loglogistic"
+)
+# This provides you with an Wald CI on the logit scale:
+pred_fun <- deltamethod_from_model(survreg_fit, tau = tau)
+pred_fun(newdata)
+
+# Fit a logitIPCW model
+library(mets)
+logipcw_fit <- logitIPCW(Event(time, status) ~ trt, time = tau, data = df)
+predfun_logit <- deltamethod_from_model(logipcw_fit, tau = tau)
+pred_fun(newdata)
+
+# IPCW Logistic Regression
+fit <- ipcw_logistic_regression(df,
+  tau = tau, time_var = "time",
+  status_var = "status"
+)
+predict(fit, newdata)
+
+# IPCW XGBoost Classifier
+fit <- ipcw_xgboost(df, tau = tau, time_var = "time", status_var = "status")
+predict(fit, newdata)
+```
 
 # Development
 
@@ -58,7 +105,7 @@ Restore the development environment with:
 renv::restore()
 ```
 
-then use everything available in the `devtools` package to develop the package.
+then use anything available in the `devtools` package to develop the package.
 
 ```r
 library(devtools)

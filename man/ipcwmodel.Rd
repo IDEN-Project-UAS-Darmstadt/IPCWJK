@@ -19,7 +19,7 @@ ipcwmodel(
   additional_information = list()
 )
 
-\method{predict}{ipcwmodel}(object, newdata, naive = FALSE, wald = FALSE, z = 1.96, ...)
+\method{predict}{ipcwmodel}(object, newdata, naive = FALSE, z = 1.96, ...)
 }
 \arguments{
 \item{model_name}{Character. The name of the model.}
@@ -56,14 +56,8 @@ are to be made.}
 \item{naive}{Logical. If \code{TRUE}, use the naive jackknife variance
 estimator. If \code{FALSE}, use the IPCW-weighted estimator.}
 
-\item{wald}{Logical. If \code{TRUE}, compute confidence intervals using the
-Wald approach (normal approximation). If \code{FALSE}, use weighted
-quantiles of the jackknife predictions.}
-
 \item{z}{Numeric. The z-score to use for the confidence interval.
-Default is 1.96, corresponding to a 95\% confidence interval. For the
-non-Wald approach, this is is converted to quantiles of the
-empirical distribution of the jackknife predictions.}
+Default is 1.96, corresponding to a 95\% confidence interval.}
 
 \item{...}{Additional arguments (currently ignored).}
 }
@@ -87,13 +81,8 @@ the naive approach (using the number of jackknife models minus one as the
 denominator) or the robust approach (using the IPCW weights). This
 is controlled by the \code{naive} argument in the \code{predict} method.
 
-The confidence intervals then can either be computed using the Wald
-approach (using a z-score, default is 1.96 for 95\% CI) or using quantiles
-of the jackknife predictions (default). This is controlled by the \code{wald}
-argument in the \code{predict} method. The quantiles are computed using
-\code{Hmisc::wtd.quantile} function, which allows for weighted quantiles.
-The weights are either the IPCW weights or the naive weights, depending on
-the \code{naive} argument.
+The confidence intervals then are computed using the Wald
+approach (using a z-score, default is 1.96 for 95\% CI).
 }
 \section{Methods (by generic)}{
 \itemize{

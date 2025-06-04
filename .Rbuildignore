@@ -9,3 +9,4 @@
 ^\.renvignore$
 ^\.github$
 ^README\.Rmd$
+^\.git$
