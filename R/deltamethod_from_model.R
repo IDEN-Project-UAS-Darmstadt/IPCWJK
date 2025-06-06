@@ -3,35 +3,37 @@
 #' @description
 #' \loadmathjax
 #' Constructs a prediction function that estimates the survival probability
-#' at a specified time horizon \mjeqn{tau}{tau} from a fitted survival model,
+#' at a specified time horizon \mjeqn{|tau}{tau} from a fitted model,
 #' and computes its standard error and Wald confidence interval
 #' using the delta method.
 #'
 #' @details
-#' The function supports models of class \code{survreg} with
-#' log-logistic distribution and models of class \code{binreg}
-#' (such as those fitted by \code{logitIPCW}). For \code{binreg} models,
+#' The function supports models of from [survival::survreg()]
+# \insertCite{survival-package}{IPCWJK} with
+#' log-logistic distribution and models of class `binreg`
+#' (such as those fitted by [mets::logitIPCW()])
+#' \insertCite{Blanche2023,mets1,mets2}{IPCWJK}. For `binreg` models,
 #' the function can use either the naive or the robust variance estimator,
-#' depending on the value of the \code{naive} argument.
+#' depending on the value of the `naive` argument.
 #'
 #' @param model A fitted model object. Supported types are
-#'   \code{survreg} with log-logistic distribution and \code{binreg}
-#'   (e.g., from \code{logitIPCW}).
+#'   [survival::survreg()] with log-logistic distribution and
+#'  [mets::logitIPCW()].
 #' @inheritParams ipcw_weights
-#' @param naive Logical. If \code{TRUE}, use the naive variance
-#'   estimator for \code{binreg} models. If \code{FALSE} (default),
+#' @param naive Logical. If `TRUE`, use the naive variance
+#'   estimator for `binreg` models. If `FALSE` (default),
 #'   use the robust variance estimator.
 #' @inherit deltamethod_pred_function return
+#' @seealso [deltamethod_pred_function()] for the underlying implementation and
+#' [IPCWJK] for confidence interval calculation
 #' @import mathjaxr
 #' @importFrom Rdpack reprompt
 #' @importFrom stats vcov coef deriv
 #' @references
 #' \insertAllCited{}
-#' @family helpers
 #' @examples
-#' # veteran data example
 #' library(survival)
-#' tau <- 80
+#' tau <- 100
 #' df <- veteran[, c("time", "status", "trt")]
 #' newdata <- data.frame(trt = c(1, 2))
 #'
@@ -63,7 +65,7 @@ deltamethod_from_model <- function(model, tau, naive = FALSE) {
       coefs,
       additional_coefs = c("lscale"),
       coef_cov = vcoef_cov,
-      fixed_vars = list(tau = tau)
+      fixed_vars = c(tau = tau)
     )
   } else if (inherits(model, "binreg") && ("naive.var" %in% names(model))) {
     if (model$time != tau) {
@@ -81,7 +83,7 @@ deltamethod_from_model <- function(model, tau, naive = FALSE) {
       coef(model),
       additional_coefs = character(),
       coef_cov = vcoef_cov,
-      fixed_vars = list(tau = tau)
+      fixed_vars = c(tau = tau)
     )
   } else {
     stop("Unsupported model type. Only 'survreg' with 'loglogistic'

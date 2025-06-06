@@ -1,21 +1,21 @@
-url: ~
+url: https://iden-project-uas-darmstadt.github.io/IPCWJK
 template:
   bootstrap: 5
   math-rendering: mathjax
 reference:
-- title: Package and Helpers
-  desc: The package itself and helpers
+- title: Central Information and Functions
 - contents:
   - IPCWJK-package
-  - has_concept("helpers")
+  - ipcw_weights
+  - deltamethod_from_model
+  - deltamethod_pred_function
 - title: IPCW Models
   desc:  Binary classifiers for survival prediction using inverse probability of censoring weights (IPCW).
 - contents:
-  - has_concept("ipcwmodels")
-- title: IPCW Base Class
-  desc:  Base class for IPCW models.
-- contents:
-  - has_concept("ipcwbaseclass")
+  - ipcwmodel
+  - has_concept("IPCW models")
+deploy:
+  install_metadata: true
 repo:
   url:
     home: https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK

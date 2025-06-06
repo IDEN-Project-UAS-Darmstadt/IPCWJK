@@ -1,11 +1,120 @@
-#' IPCWJK: IPCW Jackknife SE Estimation for right-censored survival data
+#' IPCWJK: IPCW jackknife SE Estimation for right-censored survival data
 #' \loadmathjax
 #'
+#' @description
 #' Provides functions for fitting binary classification models with
 #' inverse probability of censoring weights (IPCW) to estimate survival
-#' probabilities, and implements Jackknife resampling methods for unbiased
-#' prediction error estimation in survival analysis. The package supports model
-#' fitting, IPCW calculation, and Jackknife error estimation.
+#' probabilities, and implements jackknife resampling methods for unbiased
+#' prediction error estimation.
+#'
+#' @details
+#' For \mjeqn{n}{n} individuals we observe realizations of the random variables
+#' of covariates, time to event and event indicators
+#' \mjeqn{(X_i,T_i,\delta_i)}{(X_i,T_i,delta_i)}. We assume the variables
+#' are independent identically distributed between individuals. The time to
+#' to event is right-censored. For the underlying unobserved time to event
+#' \mjeqn{T^*_i}{T^*_i} and time to censoring \mjeqn{C_i}{C_i} we assume
+#' them to be independent conditional on \mjeqn{X_i}{X_i}.
+#'
+#' ## Prediction Target and IPCW
+#'
+#' The goal is to predict the survival probability \mjeqn{p_i}{p_i} at a
+#' time horizon \mjeqn{\tau}{tau}. This probability is defined as
+#'
+#' \mjdeqn{
+#' p_i:=P(T^* \geq \tau | X=x_i) = P(Y=1|X=x_i).}{p_i:=P(T^* >= tau | X=x_i)
+#' = P(Y=1|X=x_i).}
+#'
+#' The random variable \mjeqn{Y:=\mathbf{I}(T^* > \tau)}{Y:=I(T* > tau)}
+#' represents the dichotomized outcome that a binary classifier could use
+#' as the dependent variable for predicting \mjeqn{p_i}{p_i}.
+#' This random variable is unobservable for individuals, who were
+#' censored before \mjeqn{\tau}{tau}. The removal of these individuals
+#' leads to worse discrimination and calibration of the model
+#' \insertCite{Reps2021,Kvamme2023}{IPCWJK}. Inverse probability of censoring
+#' weights (IPCW) can correct this. The calculation of these weights
+#' is implemented in [ipcw_weights()].
+#'
+#' When using a maximum-likelihood based model IPCW weights can either be
+#' applied to the contribution to the loss of a model (IPCW-GLM) or to
+#' to the outcome of an individual (\mjeqn{Y_i}{Y_i}, OIPCW). In our setting,
+#' these are equivalent \insertCite{Blanche2023}{IPCWJK}. For many
+#' model algorithms, this distinction depends on how training weights are
+#' implemented.
+#'
+#' In this package the names of the observations of the random variables
+#' \mjeqn{(T_i,\delta_i)}{(T_i,delta_i)} are given in the arguments `time_var`
+#' and `status_var`. \mjeqn{\tau}{tau} is specified with `tau`.
+#'
+#' ## Standard Error (SE) using the Delta method
+#'
+#' For many applications uncertainty of predictions plays a large role.
+#' Uncertainty is communicated with standard errors (SEs) or a confidence
+#' interval of the prediction. When a differentiable function is used to
+#' calculate predictions from asymptotically normal distributed random
+#' variables, the delta method can be used to calculate a standard error. We
+#' provide this functionality implemented for trained models in
+#' [deltamethod_from_model()]. A more flexible interface is available with
+#' [deltamethod_pred_function()].
+#'
+#' The function [deltamethod_from_model()] for example supports the
+#' implementation of the IPCW-GLM logistic regression in [mets::logitIPCW()].
+#' From the fitted model, both the naive and for randomness of the weights
+#' adjusted variance estimators can be used
+#' \insertCite{Blanche2023,mets1,mets2}{IPCWJK}.
+#'
+#' This correction of the variance estimator has only been described for GLMs,
+#' we provide a model-agnostic estimation using a weighted jackknife approach.
+#'
+#' ## Confidence intervals (CIs)
+#'
+#' Wald confidence intervals (CIs) \mjeqn{\hat{p}\pm z_{1-\alpha/2}SE(\hat{p})
+#' }{^p+-z*SE(^p)} in their commonly used form can lead to CIs
+#' outside the 0,1 range. Better interpretable CIs are provided
+#' by the delta method with intervals calculated on the
+#' logit scale. This assumes asymptotic normality of the prediction
+#' \insertCite{Perme2019}{IPCWJK}.
+#'
+#' \mjdeqn{
+#' \Big[\frac{\exp(LL_{logit})}{1+\exp(LL_{logit})};
+#' \frac{\exp(UL_{logit})}{1+\exp(UL_{logit})}\Big]
+#' }{[exp(LLlogit)/(1+exp(LLlogit));exp(ULlogit)/(1+exp(ULlogit))] }
+#'
+#' \mjdeqn{
+#' LL_{logit} / UL_{logit}= \ln(\frac{\hat{p}}{1-\hat{p}})
+#' \pm z_{1-\alpha/2} \frac{SE(\hat{p})}{\hat{p}(1-\hat{p})}
+#' }{LLlogit/ULlogit=ln(^p/(1-^p))+-z*SE(^p)/(^p*(1-^p))}
+#'
+#' This approach is used for all CIs returned by this package.
+#'
+#' ## Standard Error using a weighted jackknife Estimator
+#'
+#' For the jackknife \insertCite{Efron2016}{IPCWJK} estimate of the prediction
+#' standard error \mjeqn{n}{n}
+#' models are trained on the training data. For the \mjeqn{i}{i}th model
+#' the \mjeqn{i}{i}th individual gets removed from the data. The prediction
+#' of the model trained on the full data will be referred to as
+#' \mjeqn{\hat{p}}{^p} and the prediction of the model with the removed
+#' individual as \mjeqn{\hat{p}_{-i}}{^p-i}. The unweighted jackknife
+#' estimator is defined as:
+#'
+#' \mjdeqn{\hat{Var}(\hat{p})=\frac{n-1}{n}\sum_{i=1}^n(\hat{p}-\hat{p}_{-i}
+#' )^2.}{^Var(^p)=(n-1)/(n)sum_i_to_n((^p - ^p-i)^2).}
+#'
+#' This is used by the [predict()][predict.ipcwmodel] function, when
+#' `naive` argument is set to `TRUE`. When using IPCW weights the influence
+#' of a individual depends on the weights and therefore the weights need to
+#' be accounted for in the estimation. Instead of weighting each \mjeqn{
+#' \hat{p}_{-i}}{^p-i} prediction with \mjeqn{\frac{n-1}{n}}{(n-1)/(n)},
+#' each model prediction with a non-zero weight gets weighted with
+#' \mjeqn{1-\tilde{w}_i}{1-w_i_tilde}. Here we assume the weights to
+#' already sum to one. This is used by default, with `naive` being set
+#' to `FALSE`.
+#'
+#' ## Models
+#'
+#' IPCW weighting and weighted jackknife standard error estimation are
+#' implemented in models inheriting from [ipcwmodel].
 #'
 #' @import mathjaxr
 #' @importFrom Rdpack reprompt
