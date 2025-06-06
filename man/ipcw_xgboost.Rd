@@ -39,7 +39,7 @@ Default is \code{"delta"}.}
 cross-validation (default is 0).}
 
 \item{grid}{Data frame. Grid of hyperparameters to test in cross-validation.
-The default is the output of \code{ipcw_xgboost_default_grid()}.}
+The default is the return of `ipcw_xgboost_default_grid()``.}
 
 \item{nrounds}{Integer. Maximum number of boosting rounds for XGBoost
 training and cross-validation (default is 100).}
@@ -53,7 +53,7 @@ to trigger early stopping during cross-validation (default is 10).}
 (default is 1).}
 }
 \value{
-An object of class \code{IPCWModel}.
+An object of class \link{ipcwmodel}.
 }
 \description{
 \loadmathjax
@@ -63,7 +63,26 @@ model training are performed.
 }
 \details{
 Training is performed using the \code{xgboost} package
-\insertCite{xgboost}{IPCWJK}. The weights are calculated using the
+\insertCite{xgboost}{IPCWJK} based on the \code{"binary:logistic"} objective.
+
+Hyperparameter tuning is done using three (\code{nfold}) fold cross-validation
+with a grid of parameters. The best parameters are selected based on the
+minimum test log loss over 100 (\code{nrounds}) rounds with early stopping
+(10 rounds, \code{early_stopping_rounds}).
+Note that the tested hyperparameters are
+based on our simulation and will not be useful for all datasets.
+
+The tested hyperparameters include:
+\itemize{
+\item \code{booster}: \code{"gbtree"} or \code{"gblinear"}.
+\item \code{eta}: Learning rate, tested as \code{1 / 10^(0:5)}.
+\item For\code{booster="gblinear"}:
+\itemize{
+\item \code{max_depth}: Maximum depth of the tree, tested as \code{c(12, 6, 3, 1)}.
+}
+}
+
+With the best parameters, the model is trained on the full dataset.
 }
 \section{Functions}{
 \itemize{
@@ -71,9 +90,8 @@ Training is performed using the \code{xgboost} package
 
 }}
 \examples{
-#' # veteran data example
 library(survival)
-tau <- 80
+tau <- 100
 df <- veteran[, c("time", "status", "trt")]
 newdata <- data.frame(trt = c(1, 2))
 
@@ -87,25 +105,10 @@ predict(fit, newdata)
 \insertAllCited{}
 }
 \seealso{
-\code{\link{ipcw_weights}} function, and then normalized to sum
-to one.
+\code{\link[=ipcw_weights]{ipcw_weights()}} for the underlying implementation of the weights
+and \link{IPCWJK} for more information.
 
-Hyperparameter tuning is performed using three fold cross-validation with a
-grid of parameters. The best parameters are selected based on the minimum
-test log loss over 100 rounds with early stopping (10 rounds).
-Note that the tested hyperparameters are
-based on our simulations study and may not be optimal for all datasets.
-
-The tested hyperparameters include:
-\itemize{
-\item \code{booster}: "gbtree" or "gblinear". For "gbtree":
-\item \code{eta}: Learning rate, tested as \code{1 / 10^(0:5)}.
-\item \code{max_depth}: Maximum depth of the tree, tested as \code{c(12, 6, 3, 1)}.
-}
-
-With the best parameters, the model is trained on the full dataset.
-
-Other ipcwmodels: 
+Other IPCW models: 
 \code{\link{ipcw_logistic_regression}()}
 }
-\concept{ipcwmodels}
+\concept{IPCW models}

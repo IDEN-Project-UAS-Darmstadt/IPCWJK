@@ -1,7 +1,11 @@
 ---
 description: "Doing Survival Analysis with Binary Classifiers using IPCW"
 title: "IPCW Models for Survival Analysis"
-output: rmarkdown::html_vignette
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: true
+bibliography: '`r system.file("REFERENCES.bib", package="IPCWJK")`'
 vignette: >
   %\VignetteIndexEntry{IPCW Models for Survival Analysis}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,11 +15,34 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  fig.align = "center",
+  dpi = 100,
+  out.width = "100%"
 )
 ```
 
-We create the data with a similar structure to the one used in the paper.
+This vignettes illustrates the use of the package with simulated data,
+which we also used in our publication.
+
+With generate $500$ observations. For each subject $i$, the values of two 
+binary covariates.
+Time to event $t^*_i$ is generated from a log-logistic distribution with shape
+$1$ and scale $\exp(b_0+b_1x_{i1}+b_2x_{i2})$ with
+$b_0=1, b_1=-0.5, b_2=0.5$. Time to censoring $c_i$ is generated from an
+exponential distribution with parameter $\lambda_{cens}=0.1$.
+The dichotomized outcome $Y=I(T^*\geq\tau)$ of the $n$ independent with
+a log-logistic distribution then follows:  
+
+$$
+p=P(Y=1|X=x) = P(T^*\geq \tau | X=x) = 
+\left(1+\exp(-(-\ln(\tau)+b_0+b_1x_1+b_2x_2))\right)^{-1}
+$$
+
+This means that both a parametric survival model and logistic regression 
+match the data generating mechanism.
 
 ```{r data}
 # For rllogis:
@@ -48,6 +75,32 @@ test_data_true_probs <- 1 - pllogis(tau,
 )
 ```
 
+The following Kaplan-Meier plot shows the groups, for which we want to
+make predictions.
+
+```{r data_km}
+library(survival)
+filtered_df <- merge(df, test_data)
+fit <- survfit(Surv(t, delta) ~ x1 + x2, data = filtered_df)
+
+strata <- names(fit$strata)
+cols <- hcl.colors(length(strata) + 1, palette = "Dynamic")
+plot(fit, col = cols[-1], xlab = "Time", ylab = "Survival Probability", lty = 1)
+legend("topright", legend = c("Tau", strata), col = cols, lty = 1)
+abline(v = 0.4, col = cols[1])
+```
+
+The table shows the corresponding true probabilities $p$ at $\tau$.
+
+```{r data_true}
+tplt <- test_data
+tplt[["True Survival Probability"]] <- test_data_true_probs
+knitr::kable(tplt)
+```
+
+With the package `?IPCWJK`, we can for example calculate the IPCW weights with
+`ipcw_weights()`.
+
 ```{r ipcw_data}
 library(IPCWJK)
 
@@ -58,76 +111,95 @@ hist(w,
 )
 ```
 
-## Parametric Model
+This can be used to calculate a Brier score.
 
-We can model the data with a parametric survival model for example.
+```{r brier}
+# This is ok, as the censored observations before tau are not used
+y <- 1 * (df$t > tau)
+
+brier <- function(pred) {
+  sum(w * (pred - y)**2) / sum(w)
+}
+```
+
+Now we can start to model the data.
+
+## Model Based Standard Errors
+
+These models use standard errors calculated from the fitting process.
+
+### Parametric Model
+
+With a parametric survival model, we can match the data generating mechanism.
 
 ```{r parametric_model}
+all_results <- list()
+
 library(survival)
 parmmodel <- survreg(Surv(t, delta) ~ x1 + x2, data = df, dist = "loglogistic")
-parmmodel_pred <- deltamethod_from_model(parmmodel, tau)
-
-
-y <- 1 * (df$t > tau)
-pred <- parmmodel_pred(df)$prediction
-# This is ok, as the censored observations before tau are not used
-parmmodel_train_brier <- sum(w * (pred - y)**2) / sum(w)
 
 parmmodel
 ```
 
 Based on the model we can predict the survival probability at $\tau$ 
-and get the standard error of the prediction using the delta method.
+and get the standard error of the prediction using the delta method with the
+`deltamethod_from_model()` function.
 
 ```{r parametric_prediction}
-parmmodel_predictions <- parmmodel_pred(test_data)
+pred_fun <- deltamethod_from_model(parmmodel, tau)
+preds <- pred_fun(test_data)
+brier_score <- brier(pred_fun(df)$prediction)
 
-parmmodel_predictions
+all_results[["Parametric"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
 ```
 
-## IPCW XGBoost Model
+### Logistic Regression with `logitIPCW`
 
-```{r xgboost_model}
-xgbmodel <- ipcw_xgboost(df, tau,
-  time_var = "t",
-  status_var = "delta", verbose = 0
-)
-
-xgb_train_brier <- sum(w * (predict(xgbmodel, df)$prediction - y)**2) / sum(w)
-
-xgbmodel
-```
-
-
-```{r xgboost_prediction}
-xgbmodel_predictions <- predict(xgbmodel, test_data)
-xgbmodel_predictions
-```
-
-## Logistic Regression Model with logitIPCW
+With `mets::logitIPCW()` we can use the adjusted variance estimation
+[@Blanche2023;@mets1;@mets2]. `deltamethod_from_model()` allows us to 
+both use the naive and corrected estimation.
 
 ```{r logitIPCW_model}
 library(mets)
 logitipcw_m <- logitIPCW(Event(t, delta) ~ x1 + x2, time = tau, data = df)
-
-logitipcw_pred_corre <- deltamethod_from_model(logitipcw_m, tau)
-logitipcw_pred_naive <- deltamethod_from_model(logitipcw_m, tau, naive = TRUE)
-
-pred <- logitipcw_pred_corre(df)$prediction
-logitipcw_train_brier <- sum(w * (pred - y)^2) / sum(w)
-
 logitipcw_m
 ```
 
+This does predictions with the corrections ...
 
-```{r logitIPCW_model_prediction}
-logitipcw_predictions_corre <- logitipcw_pred_corre(test_data)
-logitipcw_predictions_corre
-logitipcw_predictions_naive <- logitipcw_pred_naive(test_data)
-logitipcw_predictions_naive
+```{r logitIPCW_model_prediction_corre}
+pred_fun <- deltamethod_from_model(logitipcw_m, tau)
+preds <- pred_fun(test_data)
+brier_score <- brier(pred_fun(df)$prediction)
+
+all_results[["LR (corrected)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
 ```
 
-## Logistic Regression Model with IPCW
+... and this does use the naive approach
+
+```{r logitIPCW_model_prediction_naive}
+pred_fun <- deltamethod_from_model(logitipcw_m, tau, naive = TRUE)
+preds <- pred_fun(test_data)
+brier_score <- brier(pred_fun(df)$prediction)
+
+all_results[["LR (naive)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
+```
+
+## IPCW Jackknife Based Standard Errors
+
+These models use standard errors calculated with the jackknife approach.
+We include our weighted approach (`"wJK"`) and the naive approach (`"nJK"`).
+See `?IPCWJK` for more details.
+
+### Logistic Regression with Jackknife
+
+Here we use the `ipcw_logistic_regression()` function.
 
 ```{r ipcw_logistic_regression_model}
 logreg <- ipcw_logistic_regression(df, tau,
@@ -135,67 +207,122 @@ logreg <- ipcw_logistic_regression(df, tau,
   status_var = "delta"
 )
 
-logreg_train_brier <- sum(w * (predict(logreg, df)$prediction - y)**2) / sum(w)
-
 logreg
 ```
 
+These use the weighted jackknife ...
 
 ```{r ipcw_logistic_regression_prediction}
-logreg_predictions <- predict(logreg, test_data)
-logreg_predictions
+preds <- predict(logreg, test_data)
+brier_score <- brier(predict(logreg, df)$prediction)
+
+all_results[["LR (nJK)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
 ```
 
-## Comparison (XGBoost vs Parametric only for now)
+... and these the unweighted jackknife.
+
+```{r ipcw_logistic_regression_prediction_naive}
+preds <- predict(logreg, test_data, naive = TRUE)
+brier_score <- brier(predict(logreg, df, naive = TRUE)$prediction)
+
+all_results[["LR (wJK)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
+```
+
+### XGBoost Binary Classifier with Jackknife
+
+Here we use the `ipcw_xgboost()` function. As it is a machine learning model,
+based on a boosted learning process, there is no parametric calculation of
+the standard error possible.
+
+```{r ipcw_xgb_model}
+xgb <- ipcw_xgboost(df, tau,
+  time_var = "t",
+  status_var = "delta"
+)
+
+xgb
+```
+
+These use the weighted jackknife ...
+
+```{r ipcw_xgb_prediction}
+preds <- predict(xgb, test_data)
+brier_score <- brier(predict(xgb, df)$prediction)
+
+all_results[["XGBoost (wJK)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
+```
+
+... and these the unweighted jackknife.
+
+```{r ipcw_xgb_prediction_naive}
+preds <- predict(xgb, test_data, naive = TRUE)
+brier_score <- brier(predict(xgb, df, naive = TRUE)$prediction)
+
+all_results[["XGBoost (nJK)"]] <- list(preds = preds, brier = brier_score)
+
+knitr::kable(preds)
+```
+
+## Comparison 
+
+We will compare the results of the models.
 
 ```{r brier_scores}
-brier_scores <- data.frame(
-  Model = c("Parametric", "XGBoost"),
-  Brier_Score = c(parmmodel_train_brier, xgb_train_brier)
-)
+cols <- hcl.colors(length(all_results), palette = "Dynamic")
+brier_scores <- sapply(all_results, "[[", "brier")
 
 barplot(
-  brier_scores$Brier_Score,
-  names.arg = brier_scores$Model,
-  main = "Brier Scores by Model",
-  ylab = "Brier Score"
+  brier_scores,
+  col = cols,
+  names.arg = names(brier_scores),
+  ylab = "Brier Score",
+  las = 2,
+  cex.names = 0.75
 )
 ```
 
+As is expected, the variance estimation has no impact on the model performance.
+The following plot shows the results for the first test data entry.
+
 ```{r predictions_comparison_test_data1}
-for (i in seq_len(nrow(test_data))) {
-  true_prob <- test_data_true_probs[i]
-  predictions_comparison <- data.frame(
-    Model = c("Parametric", "XGBoost"),
-    Prediction = c(
-      parmmodel_predictions[i, "Prediction"],
-      xgbmodel_predictions[i, "prediction"]
-    )
-  )
+i <- 1
+testpreds <- all_results |>
+  sapply(\(res) unlist(res$preds[i, ])) |>
+  t() |>
+  as.data.frame()
 
-  if (i == 1) {
-    par(mfrow = c(1, nrow(test_data)))
-  }
-
-  barplot(
-    predictions_comparison$Prediction,
-    names.arg = predictions_comparison$Model,
-    main = paste("Test Case", i),
-    ylab = "Predicted Probability",
-    ylim = c(0, 1)
-  )
-  abline(h = true_prob, col = "red", lwd = 2)
-  legend(
-    "topright",
-    legend = paste("True Probability =", round(true_prob, 3)),
-    col = "red",
-    lwd = 2,
-    bty = "n"
-  )
-
-  # Reset plotting area after last plot
-  if (i == nrow(test_data)) {
-    par(mfrow = c(1, 1))
-  }
-}
+bar_centers <- barplot(testpreds$prediction,
+  names.arg = rownames(testpreds),
+  col = cols,
+  ylim = c(0, max(testpreds$upper) * 1.05),
+  las = 2,
+  cex.names = 0.75,
+  ylab = "Prediction"
+)
+arrows(
+  x0 = bar_centers, y0 = testpreds$lower,
+  x1 = bar_centers, y1 = testpreds$upper,
+  angle = 90, code = 3, length = 0.05, lwd = 1.5
+)
+abline(h = test_data_true_probs[[i]], col = "red", lwd = 2, lty = 2)
+legend(
+  "topright",
+  legend = paste("True Probability =", round(test_data_true_probs[[i]], 3)),
+  col = "red",
+  lwd = 2,
+  lty = 2,
+  bty = "n"
+)
 ```
+
+```{r predictions_comparison_test_data1_table}
+knitr::kable(testpreds)
+```
+
+## References

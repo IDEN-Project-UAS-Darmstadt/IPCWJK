@@ -3,21 +3,12 @@
 #' @description
 #' \loadmathjax
 #' Computes inverse probability of censoring weights (IPCW) for right-censored
-#' survival data using the \code{pec::ipcw} function.
+#' survival data using the [pec::ipcw()] function based on a Kaplan-Meier
+#' estimate of the censoring distribution \mjeqn{C}{C}.
 #'
 #' @details
-#' Predicting a survival probability for a right-censored event time outcome
-#' at a specific time horizon \mjeqn{\tau}{tau} can be performed using binary
-#' classifiers. For this purpose, the event time outcome is dichotomized into
-#' a binary variable indicating whether a subject has survived up to time
-#' \mjeqn{\tau}{tau} or not.
-#' However, this approach can not account for subjects who are lost to
-#' follow-up before time \mjeqn{\tau}{tau} and therefore before experiencing
-#' the event of interest. This leads to worse discrimination and calibration
-#' of the model \insertCite{Reps2021,Kvamme2023}{IPCWJK}.
-#'
 #' Weighting observations by their Inverse Probability of Censoring has been
-#' proposed to prevent bias
+#' proposed to prevent bias introduced by removing censored individuals
 #' \insertCite{Vock2016,Ginestet2021,Blanche2023}{IPCWJK} and improve model
 #' performance.
 #'
@@ -26,29 +17,31 @@
 #' \left\lbrace
 #' \begin{array}{ll}
 #'  0, & c_i < \tau \wedge t^*_i \cr
-#'  \frac{1}{\mathbb{P}(C > \tau \mid X = x_i)}, & \tau < c_i \wedge t^*_i \cr
-#'  \frac{1}{\mathbb{P}(C > t_i \mid X = x_i)}, & t^*_i < c_i \wedge \tau
+#'  \frac{1}{P(C > \tau \mid X = x_i)}, & \tau < c_i \wedge t^*_i \cr
+#'  \frac{1}{P(C > t_i \mid X = x_i)}, & t^*_i < c_i \wedge \tau
 #' \end{array}
 #' \right.
 #' }{w_i_tilde = 0, if c_i < tau and t*_i; 1 / P(C > tau | X = x_i),
 #' if tau < c_i and t*_i; 1 / P(C > t_i | X = x_i), if t*_i < c_i and tau }
 #'
-#' The function uses the \code{pec::ipcw}\insertCite{pec}{IPCWJK} function to
-#' compute the IPCW weights. They are not normalized (are **not** scaled to sum
+#' The function uses the [pec::ipcw()] \insertCite{pec}{IPCWJK} function to
+#' compute the IPCW weights. They are not normalized (do **not** sum
 #' to one).
 #'
 #' @param data A data frame containing the survival data. Must include columns
 #'   for the observed time and event indicator.
 #' @param tau Numeric scalar. The time horizon at which the survival
 #'   probability is to be estimated.
-#' @param time_var Character. The name of the variable in \code{data}
+#' @param time_var Character. The name of the variable in `data`
 #'   representing the observed time to event or censoring.
-#'   Default is \code{"t"}.
-#' @param status_var Character. The name of the variable in \code{data}
+#'   Default is `"t"`.
+#' @param status_var Character. The name of the variable in `data`
 #'   representing the event indicator (1 if event occurred, 0 if censored).
-#'   Default is \code{"delta"}.
+#'   Default is `"delta"`.
 #' @return A numeric vector of IPCW weights, ordered as in the original
-#'   \code{data}. The weights are not normalized (are not scaled to sum to one).
+#'  `data`. The weights are not normalized (do not sum to one).
+#' @seealso [IPCWJK] for more information and [ipcwmodel] for implementations
+#'  of ready to use models.
 #' @importFrom pec ipcw
 #' @importFrom prodlim Hist
 #' @importFrom stats as.formula
@@ -56,7 +49,6 @@
 #' @import mathjaxr
 #' @references
 #' \insertAllCited{}
-#' @family helpers
 #' @examples
 #' data <- data.frame(
 #'   t = c(5, 8, 12, 15, 20),

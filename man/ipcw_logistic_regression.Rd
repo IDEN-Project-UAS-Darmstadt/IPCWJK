@@ -22,7 +22,7 @@ representing the event indicator (1 if event occurred, 0 if censored).
 Default is \code{"delta"}.}
 }
 \value{
-An object of class \code{IPCWModel}.
+An object of class \link{ipcwmodel}.
 }
 \description{
 \loadmathjax
@@ -30,13 +30,12 @@ Fits a logistic regression model with IPCW for
 right-censored survival data. Jackknife model training is performed.
 }
 \details{
-Training is performed using the \code{glm} function from the \code{stats} package,
+Training is performed using the \code{glm}
 using a quasibinomial family to account for the weights.
 }
 \examples{
-#' # veteran data example
 library(survival)
-tau <- 80
+tau <- 100
 df <- veteran[, c("time", "status", "trt")]
 newdata <- data.frame(trt = c(1, 2))
 
@@ -46,11 +45,11 @@ fit <- ipcw_logistic_regression(df,
 )
 predict(fit, newdata)
 }
-\references{
-\insertAllCited{}
-}
 \seealso{
-Other ipcwmodels: 
+\code{\link[=ipcw_weights]{ipcw_weights()}} for the underlying implementation of the weights
+and \link{IPCWJK} for more information.
+
+Other IPCW models: 
 \code{\link{ipcw_xgboost}()}
 }
-\concept{ipcwmodels}
+\concept{IPCW models}

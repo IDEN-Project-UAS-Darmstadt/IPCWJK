@@ -49,13 +49,18 @@ remotes::install_github("IDEN-Project-UAS-Darmstadt/IPCWJK")
 pak::pkg_install("IDEN-Project-UAS-Darmstadt/IPCWJK")
 ```
 
-## Example
+Releases of the library can be found 
+[here](https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK/releases).
+
+## Examples
+
+IPCW weights can be calculated with the `ipcw_weights` function.
 
 ```{r data_weights}
 library(survival)
-tau <- 80
-df <- veteran[, c("time", "status", "trt")]
-newdata <- data.frame(trt = c(1, 2))
+tau <- 100
+df <- veteran[, c("time", "status", "karno", "age")]
+newdata <- data.frame(karno = c(80, 70), age = c(40, 50))
 
 # Calculation of IPCW weights at tau
 library(IPCWJK)
@@ -66,9 +71,13 @@ hist(w,
 )
 ```
 
-```{r models}
+For `survreg` models with a log-logistic distribution and `logitIPCW`
+we provide convenient access to Wald confidence intervals based on 
+the delta method on the logit scale.
+
+```{r deltamodels}
 # Fit a log-logistic survival model
-survreg_fit <- survreg(Surv(time, status) ~ trt,
+survreg_fit <- survreg(Surv(time, status) ~ karno + age,
   data = df,
   dist = "loglogistic"
 )
@@ -78,10 +87,19 @@ pred_fun(newdata)
 
 # Fit a logitIPCW model
 library(mets)
-logipcw_fit <- logitIPCW(Event(time, status) ~ trt, time = tau, data = df)
-predfun_logit <- deltamethod_from_model(logipcw_fit, tau = tau)
+logipcw_fit <- logitIPCW(Event(time, status) ~ karno + age,
+  time = tau,
+  data = df
+)
+pred_fun <- deltamethod_from_model(logipcw_fit, tau = tau)
 pred_fun(newdata)
+```
 
+Models using IPCW are also available. For these, we provide the jackknife-based
+estimation of the standard error and Wald confidence intervals based on the 
+delta method on the logit scale.
+
+```{r ipcw}
 # IPCW Logistic Regression
 fit <- ipcw_logistic_regression(df,
   tau = tau, time_var = "time",
@@ -102,7 +120,7 @@ Restore the development environment with:
 renv::restore()
 ```
 
-then use anything available in the `devtools` package to develop the package.
+Then use anything available in the `devtools` package to develop the package.
 
 ```r
 library(devtools)

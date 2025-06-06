@@ -6,7 +6,6 @@ journal = {Journal of Biomedical Informatics},
 pages = {119--131},
 publisher = {Elsevier BV},
 title = {{Adapting machine learning techniques to censored time-to-event health record data A general-purpose approach using inverse probability of censoring weighting}},
-url = {https://doi.org/10.1016/j.jbi.2016.03.009 http://dx.doi.org/10.1016/j.jbi.2016.03.009},
 volume = {61},
 year = {2016}
 }
@@ -17,7 +16,6 @@ journal = {Journal of the Royal Statistical Society Series C: Applied Statistics
 pages = {51--65},
 publisher = {Oxford University Press (OUP)},
 title = {{Stacked Inverse Probability of Censoring Weighted Bagging A Case Study In the InfCareHIV Register}},
-url = {https://academic.oup.com/jrsssc/article/70/1/51/7033916 http://dx.doi.org/10.1111/rssc.12448},
 volume = {70},
 year = {2021}
 }
@@ -55,7 +53,6 @@ eprint = {1912.08581},
 journal = {Journal of Machine Learning Research},
 pages = {1--26},
 title = {{The Brier Score under Administrative Censoring: Problems and Solutions}},
-url = {http://arxiv.org/abs/1912.08581},
 volume = {24},
 year = {2023}
 }
@@ -83,4 +80,57 @@ year = {2023}
  publisher = {ACM},
  address = {New York, NY, USA},
  keywords = {large-scale machine learning},
+}
+@Article{mets1,
+title = {The Liability Threshold Model for Censored Twin Data},
+author = {Klaus K. Holst and Thomas H. Scheike and Jacob B. Hjelmborg},
+year = {2016},
+volume = {93},
+pages = {324-335},
+journal = {Computational Statistics and Data Analysis},
+doi = {10.1016/j.csda.2015.01.014},
+}
+
+@Article{mets2,
+title = {Estimating heritability for cause specific mortality based on twin studies},
+author = {Thomas H. Scheike and Klaus K. Holst and Jacob B.Hjelmborg},
+year = {2014},
+volume = {20},
+number = {2},
+pages = {210-233},
+journal = {Lifetime Data Analysis},
+doi = {10.1007/s10985-013-9244-x},
+}
+@article{Perme2019,
+abstract = {The Mann–Whitney test is a commonly used non-parametric alternative of the two-sample t-test. Despite its frequent use, it is only rarely accompanied with confidence intervals of an effect size. If reported, the effect size is usually measured with the difference of medians or the shift of the two distribution locations. Neither of these two measures directly coincides with the test statistic of the Mann–Whitney test, so the interpretation of the test results and the confidence intervals may be importantly different. In this paper, we focus on the probability that random variable X is lower than random variable Y. This measure is often referred to as the degree of overlap or the probabilistic index; it is in one-to-one relationship with the Mann–Whitney test statistic. The measure equals the area under the ROC curve. Several methods have been proposed for the construction of the confidence interval for this measure, and we review the most promising ones and explain their ideas. We study the properties of different variance estimators and small sample problems of confidence intervals construction. We identify scenarios in which the existing approaches yield inadequate coverage probabilities. We conclude that the DeLong variance estimator is a reliable option regardless of the scenario, but confidence intervals should be constructed using the logit scale to avoid values above 1 or below 0 and the poor coverage probability that follows. A correction is needed for the case when all values from one sample are smaller than the values of the other. We propose a method that improves the coverage probability also in these cases.},
+author = {Perme, Maja Pohar and Manevski, Damjan},
+doi = {10.1177/0962280218814556,},
+issn = {14770334},
+journal = {Statistical Methods in Medical Research},
+keywords = {Mann–Whitney,area under ROC curve,confidence interval,effect size,probabilistic index,small sample size},
+month = {dec},
+number = {12},
+pages = {3755--3768},
+pmid = {30514179},
+publisher = {SAGE Publications Ltd},
+title = {{Confidence intervals for the Mann–Whitney test}},
+volume = {28},
+year = {2019}
+}
+
+@book{Efron2016,
+abstract = {The twenty-first century has seen a breathtaking expansion of statistical methodology, both in scope and in influence. ‘Big data', ‘data science', and ‘machine learning' have become familiar terms in the news, as statistical methods are brought to bear upon the enormous data sets of modern science and commerce. How did we get here? And where are we going? This book takes us on an exhilarating journey through the revolution in data analysis following the introduction of electronic computation in the 1950s. Beginning with classical inferential theories - Bayesian, frequentist, Fisherian - individual chapters take up a series of influential topics: survival analysis, logistic regression, empirical Bayes, the jackknife and bootstrap, random forests, neural networks, Markov chain Monte Carlo, inference after model selection, and dozens more. The distinctly modern approach integrates methodology and algorithms with statistical inference. The book ends with speculation on the future direction of statistics and data science.},
+author = {Efron, Bradley and Hastie, Trevor},
+booktitle = {Computer Age Statistical Inference: Algorithms, Evidence, and Data Science},
+month = {jan},
+pages = {1--475},
+publisher = {Cambridge University Press},
+title = {{Computer age statistical inference: Algorithms, evidence, and data science}},
+year = {2016}
+}
+@Manual{survival-package,
+title = {A Package for Survival Analysis in R},
+author = {Terry M Therneau},
+year = {2024},
+note = {R package version 3.8-3},
 }

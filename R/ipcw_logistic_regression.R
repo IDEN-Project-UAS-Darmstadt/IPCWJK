@@ -6,21 +6,20 @@
 #' right-censored survival data. Jackknife model training is performed.
 #'
 #' @details
-#' Training is performed using the `glm` function from the `stats` package,
+#' Training is performed using the `glm`
 #' using a quasibinomial family to account for the weights.
 #'
 #' @inheritParams ipcw_xgboost
 #' @inherit ipcw_xgboost return
+#' @seealso [ipcw_weights()] for the underlying implementation of the weights
+#' and [IPCWJK] for more information.
 #' @importFrom stats glm as.formula predict
 #' @importFrom Rdpack reprompt
 #' @import mathjaxr
-#' @references
-#' \insertAllCited{}
-#' @family ipcwmodels
+#' @family IPCW models
 #' @examples
-#' #' # veteran data example
 #' library(survival)
-#' tau <- 80
+#' tau <- 100
 #' df <- veteran[, c("time", "status", "trt")]
 #' newdata <- data.frame(trt = c(1, 2))
 #'

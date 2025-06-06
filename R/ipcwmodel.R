@@ -1,24 +1,25 @@
 #' IPCW Model Class
 #'
-#' Constructs an object of class \code{ipcwmodel}.
-#'
 #' @description
 #' \loadmathjax
-#' The resulting object contains the fitted model, jackknife resamples,
-#' prediction function, training Brier score, and metadata about the model.
+#' `ipcwmodel` objects contain the fitted model, models fitted on jackknife
+#' samples, the prediction function, training Brier score, and
+#' metadata about the model.
 #'
 #' @details
-#' Models can be used by calling the \code{predict(model, newdata)} method.
-#' It returns a data frame with columns for the prediction, lower and upper
-#' confidence intervals, and standard error.
+#' Models can be used by calling the `predict(model, newdata)` method.
+#' It returns a data frame with columns for the
+#' prediction `prediction`, lower `lower` and upper `upper` Wald
+#' confidence intervals, and standard error `se`. The function can also take
+#' an optional argument `z` for the z-score used in confidence
+#' interval calculation.
 #'
 #' The confidence intervals and standard errors can be computed using either
 #' the naive approach (using the number of jackknife models minus one as the
 #' denominator) or the robust approach (using the IPCW weights). This
 #' is controlled by the \code{naive} argument in the \code{predict} method.
-#'
-#' The confidence intervals then are computed using the Wald
-#' approach (using a z-score, default is 1.96 for 95% CI).
+#' The Wald confidence intervals are calculated on the logit scale.
+#' See [IPCWJK] for more information.
 #'
 #' @param model_name Character. The name of the model.
 #' @param full_model The fitted model object for the full dataset.
@@ -35,12 +36,9 @@
 #' @param w Numeric vector. The IPCW weights used for model fitting.
 #' @param additional_information List. Additional information to be stored in
 #'   the model object (default is an empty list).
-#' @return An object of class \code{ipcwmodel} containing the model details.
+#' @return An object of class `ipcwmodel` containing the model details.
 #' @importFrom Rdpack reprompt
 #' @import mathjaxr
-#' @references
-#' \insertAllCited{}
-#' @family ipcwbaseclass
 #' @export
 ipcwmodel <- function(model_name, full_model, jackknife_models, tau,
                       predict, train_brier,
@@ -105,16 +103,16 @@ print.ipcwmodel <- function(x, ...) {
 }
 
 #' @export
-#' @param object An object of class \code{ipcwmodel}.
+#' @param object An object of class `ipcwmodel`.
 #' @param newdata A data frame containing the covariates for which predictions
 #'   are to be made.
-#' @param naive Logical. If \code{TRUE}, use the naive jackknife variance
-#'   estimator. If \code{FALSE}, use the IPCW-weighted estimator.
+#' @param naive Logical. If `TRUE`, use the naive jackknife variance
+#'   estimator. If `False`, use the IPCW-weighted estimator.
 #' @param z Numeric. The z-score to use for the confidence interval.
 #'   Default is 1.96, corresponding to a 95% confidence interval.
 #' @param ... Additional arguments (currently ignored).
 #' @importFrom stats pnorm
-#' @describeIn ipcwmodel Predict method for \code{ipcwmodel} objects.
+#' @describeIn ipcwmodel Predict method for `ipcwmodel` objects.
 predict.ipcwmodel <- function(object, newdata, naive = FALSE,
                               z = 1.96, ...) {
   if (missing(newdata)) {
@@ -162,6 +160,10 @@ predict.ipcwmodel <- function(object, newdata, naive = FALSE,
   } else {
     weights <- ifelse(object$w == 0, 0, 1 - object$w)
   }
-  se <- sqrt(rowSums(weights * jk_dev))
+  for (i in seq.int(n_preds)) {
+    jk_dev[i, ] <- weights * jk_dev[i, ]
+  }
+  se <- sqrt(rowSums(jk_dev))
+
   wald(pred, z, se, logit = TRUE)
 }
