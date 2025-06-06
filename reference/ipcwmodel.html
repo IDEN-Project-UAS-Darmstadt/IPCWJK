@@ -7,11 +7,13 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="IPCW Model Class — ipcwmodel"><meta name="description" content="
 
-The resulting object contains the fitted model, jackknife resamples,
-prediction function, training Brier score, and metadata about the model."><meta property="og:description" content="
+ipcwmodel objects contain the fitted model, models fitted on jackknife
+samples, the prediction function, training Brier score, and
+metadata about the model."><meta property="og:description" content="
 
-The resulting object contains the fitted model, jackknife resamples,
-prediction function, training Brier score, and metadata about the model."></head><body>
+ipcwmodel objects contain the fitted model, models fitted on jackknife
+samples, the prediction function, training Brier score, and
+metadata about the model."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +21,7 @@ prediction function, training Brier score, and metadata about the model."></head
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,10 +52,9 @@ prediction function, training Brier score, and metadata about the model."></head
     </div>
 
     <div class="ref-description section level2">
-    <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script>
-
-The resulting object contains the fitted model, jackknife resamples,
-prediction function, training Brier score, and metadata about the model.</p>
+    <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script><code>ipcwmodel</code> objects contain the fitted model, models fitted on jackknife
+samples, the prediction function, training Brier score, and
+metadata about the model.</p>
     </div>
 
     <div class="section level2">
@@ -139,7 +140,7 @@ are to be made.</p></dd>
 
 <dt id="arg-naive">naive<a class="anchor" aria-label="anchor" href="#arg-naive"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, use the naive jackknife variance
-estimator. If <code>FALSE</code>, use the IPCW-weighted estimator.</p></dd>
+estimator. If <code>False</code>, use the IPCW-weighted estimator.</p></dd>
 
 
 <dt id="arg-z">z<a class="anchor" aria-label="anchor" href="#arg-z"></a></dt>
@@ -157,26 +158,24 @@ Default is 1.96, corresponding to a 95% confidence interval.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Constructs an object of class <code>ipcwmodel</code>.</p>
-<p>Models can be used by calling the <code>predict(model, newdata)</code> method.
-It returns a data frame with columns for the prediction, lower and upper
-confidence intervals, and standard error.</p>
+    <p>Models can be used by calling the <code>predict(model, newdata)</code> method.
+It returns a data frame with columns for the
+prediction <code>prediction</code>, lower <code>lower</code> and upper <code>upper</code> Wald
+confidence intervals, and standard error <code>se</code>. The function can also take
+an optional argument <code>z</code> for the z-score used in confidence
+interval calculation.</p>
 <p>The confidence intervals and standard errors can be computed using either
 the naive approach (using the number of jackknife models minus one as the
 denominator) or the robust approach (using the IPCW weights). This
-is controlled by the <code>naive</code> argument in the <code>predict</code> method.</p>
-<p>The confidence intervals then are computed using the Wald
-approach (using a z-score, default is 1.96 for 95% CI).</p>
+is controlled by the <code>naive</code> argument in the <code>predict</code> method.
+The Wald confidence intervals are calculated on the logit scale.
+See <a href="IPCWJK-package.html">IPCWJK</a> for more information.</p>
     </div>
     <div class="section level2">
     <h2 id="methods-by-generic-">Methods (by generic)<a class="anchor" aria-label="anchor" href="#methods-by-generic-"></a></h2>
 
 <ul><li><p><code>predict(ipcwmodel)</code>: Predict method for <code>ipcwmodel</code> objects.</p></li>
 </ul></div>
-    <div class="section level2">
-    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>There are no references for Rd macro <code>\insertAllCites</code> on this help page.</p>
-    </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>

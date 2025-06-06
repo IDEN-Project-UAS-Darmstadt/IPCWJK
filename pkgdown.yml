@@ -3,4 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   ipcw_models: ipcw_models.html
-last_built: 2025-06-04T09:42Z
+last_built: 2025-06-06T11:58Z
+urls:
+  reference: https://iden-project-uas-darmstadt.github.io/IPCWJK/reference
+  article: https://iden-project-uas-darmstadt.github.io/IPCWJK/articles

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,25 @@
 
     
     
-<p>We create the data with a similar structure to the one used in the
-paper.</p>
+<p>This vignettes illustrates the use of the package with simulated
+data, which we also used in our publication.</p>
+<p>With generate <span class="math inline">\(500\)</span> observations.
+For each subject <span class="math inline">\(i\)</span>, the values of
+two binary covariates. Time to event <span class="math inline">\(t^*_i\)</span> is generated from a log-logistic
+distribution with shape <span class="math inline">\(1\)</span> and scale
+<span class="math inline">\(\exp(b_0+b_1x_{i1}+b_2x_{i2})\)</span> with
+<span class="math inline">\(b_0=1, b_1=-0.5, b_2=0.5\)</span>. Time to
+censoring <span class="math inline">\(c_i\)</span> is generated from an
+exponential distribution with parameter <span class="math inline">\(\lambda_{cens}=0.1\)</span>. The dichotomized
+outcome <span class="math inline">\(Y=I(T^*\geq\tau)\)</span> of the
+<span class="math inline">\(n\)</span> independent with a log-logistic
+distribution then follows:</p>
+<p><span class="math display">\[
+p=P(Y=1|X=x) = P(T^*\geq \tau | X=x) =
+\left(1+\exp(-(-\ln(\tau)+b_0+b_1x_1+b_2x_2))\right)^{-1}
+\]</span></p>
+<p>This means that both a parametric survival model and logistic
+regression match the data generating mechanism.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For rllogis:</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/chjackson/flexsurv" class="external-link">flexsurv</a></span><span class="op">)</span></span>
@@ -105,30 +122,78 @@ paper.</p>
 <span>  shape <span class="op">=</span> <span class="va">shape</span>,</span>
 <span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">b0</span> <span class="op">+</span> <span class="va">test_data</span><span class="op">$</span><span class="va">x1</span> <span class="op">*</span> <span class="va">b1</span> <span class="op">+</span> <span class="va">test_data</span><span class="op">$</span><span class="va">x2</span> <span class="op">*</span> <span class="va">b2</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
+<p>The following Kaplan-Meier plot shows the groups, for which we want
+to make predictions.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IPCWJK</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span><span class="va">filtered_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survfit.html" class="external-link">survfit</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data <span class="op">=</span> <span class="va">filtered_df</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">strata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">fit</span><span class="op">$</span><span class="va">strata</span><span class="op">)</span></span>
+<span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">strata</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span>, palette <span class="op">=</span> <span class="st">"Dynamic"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fit</span>, col <span class="op">=</span> <span class="va">cols</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, xlab <span class="op">=</span> <span class="st">"Time"</span>, ylab <span class="op">=</span> <span class="st">"Survival Probability"</span>, lty <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span><span class="st">"topright"</span>, legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tau"</span>, <span class="va">strata</span><span class="op">)</span>, col <span class="op">=</span> <span class="va">cols</span>, lty <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v <span class="op">=</span> <span class="fl">0.4</span>, col <span class="op">=</span> <span class="va">cols</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
+<p><img src="ipcw_models_files/figure-html/data_km-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p>The table shows the corresponding true probabilities <span class="math inline">\(p\)</span> at <span class="math inline">\(\tau\)</span>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tplt</span> <span class="op">&lt;-</span> <span class="va">test_data</span></span>
+<span><span class="va">tplt</span><span class="op">[[</span><span class="st">"True Survival Probability"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">test_data_true_probs</span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">tplt</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">x1</th>
+<th align="right">x2</th>
+<th align="right">True Survival Probability</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">0.3521874</td>
+</tr>
+<tr class="even">
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="right">0.2479757</td>
+</tr>
+</tbody>
+</table>
+<p>With the package <code><a href="../reference/IPCWJK-package.html">?IPCWJK</a></code>, we can for example calculate
+the IPCW weights with <code><a href="../reference/ipcw_weights.html">ipcw_weights()</a></code>.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://iden-project-uas-darmstadt.github.io/IPCWJK">IPCWJK</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipcw_weights.html">ipcw_weights</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>, time_var <span class="op">=</span> <span class="st">"t"</span>, status_var <span class="op">=</span> <span class="st">"delta"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">w</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="fl">30</span>, main <span class="op">=</span> <span class="st">"Histogram of IPCW Weights"</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"IPCW Weight"</span>, col <span class="op">=</span> <span class="st">"lightblue"</span>, border <span class="op">=</span> <span class="st">"grey"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="ipcw_models_files/figure-html/ipcw_data-1.png" width="700"></p>
-<div class="section level2">
-<h2 id="parametric-model">Parametric Model<a class="anchor" aria-label="anchor" href="#parametric-model"></a>
-</h2>
-<p>We can model the data with a parametric survival model for
-example.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
-<span><span class="va">parmmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data <span class="op">=</span> <span class="va">df</span>, dist <span class="op">=</span> <span class="st">"loglogistic"</span><span class="op">)</span></span>
-<span><span class="va">parmmodel_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">parmmodel</span>, <span class="va">tau</span><span class="op">)</span></span>
-<span></span>
-<span></span>
+<p><img src="ipcw_models_files/figure-html/ipcw_data-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p>This can be used to calculate a Brier score.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># This is ok, as the censored observations before tau are not used</span></span>
 <span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">*</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">t</span> <span class="op">&gt;</span> <span class="va">tau</span><span class="op">)</span></span>
-<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu">parmmodel_pred</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span></span>
-<span><span class="co"># This is ok, as the censored observations before tau are not used</span></span>
-<span><span class="va">parmmodel_train_brier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="op">(</span><span class="va">pred</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">**</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">brier</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">pred</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="op">(</span><span class="va">pred</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">**</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Now we can start to model the data.</p>
+<div class="section level2">
+<h2 id="model-based-standard-errors">Model Based Standard Errors<a class="anchor" aria-label="anchor" href="#model-based-standard-errors"></a>
+</h2>
+<p>These models use standard errors calculated from the fitting
+process.</p>
+<div class="section level3">
+<h3 id="parametric-model">Parametric Model<a class="anchor" aria-label="anchor" href="#parametric-model"></a>
+</h3>
+<p>With a parametric survival model, we can match the data generating
+mechanism.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">all_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
+<span><span class="va">parmmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data <span class="op">=</span> <span class="va">df</span>, dist <span class="op">=</span> <span class="st">"loglogistic"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">parmmodel</span></span>
 <span><span class="co">#&gt; Call:</span></span>
@@ -144,27 +209,234 @@ example.</p>
 <span><span class="co">#&gt;  Chisq= 56.45 on 2 degrees of freedom, p= 5.51e-13 </span></span>
 <span><span class="co">#&gt; n= 500</span></span></code></pre></div>
 <p>Based on the model we can predict the survival probability at <span class="math inline">\(\tau\)</span> and get the standard error of the
-prediction using the delta method.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parmmodel_predictions</span> <span class="op">&lt;-</span> <span class="fu">parmmodel_pred</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
+prediction using the delta method with the
+<code><a href="../reference/deltamethod_from_model.html">deltamethod_from_model()</a></code> function.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pred_fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">parmmodel</span>, <span class="va">tau</span><span class="op">)</span></span>
+<span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu">pred_fun</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu">pred_fun</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">parmmodel_predictions</span></span>
-<span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3191662 0.2546988 0.3836337 0.03289157</span></span>
-<span><span class="co">#&gt; 2  0.2182849 0.1662348 0.2703350 0.02655618</span></span></code></pre></div>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"Parametric"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3191662</td>
+<td align="right">0.2546988</td>
+<td align="right">0.3836337</td>
+<td align="right">0.0328916</td>
+</tr>
+<tr class="even">
+<td align="right">0.2182849</td>
+<td align="right">0.1662348</td>
+<td align="right">0.2703350</td>
+<td align="right">0.0265562</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="logistic-regression-with-logitipcw">Logistic Regression with <code>logitIPCW</code><a class="anchor" aria-label="anchor" href="#logistic-regression-with-logitipcw"></a>
+</h3>
+<p>With <code><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">mets::logitIPCW()</a></code> we can use the adjusted variance
+estimation <span class="citation">(Blanche, Holt, and Scheike 2023;
+Holst, Scheike, and Hjelmborg 2016; Scheike, Holst, and B.Hjelmborg
+2014)</span>. <code><a href="../reference/deltamethod_from_model.html">deltamethod_from_model()</a></code> allows us to both
+use the naive and corrected estimation.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
+<span><span class="va">logitipcw_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">logitIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, time <span class="op">=</span> <span class="va">tau</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
+<span><span class="va">logitipcw_m</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;    n events</span></span>
+<span><span class="co">#&gt;  500    259</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  500 clusters</span></span>
+<span><span class="co">#&gt; coeffients:</span></span>
+<span><span class="co">#&gt;             Estimate  Std.Err     2.5%    97.5% P-value</span></span>
+<span><span class="co">#&gt; (Intercept)  0.95554  0.18334  0.59620  1.31487   0e+00</span></span>
+<span><span class="co">#&gt; x1           0.70741  0.12264  0.46703  0.94779   0e+00</span></span>
+<span><span class="co">#&gt; x2          -0.84585  0.23915 -1.31458 -0.37711   4e-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; exp(coeffients):</span></span>
+<span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
+<span><span class="co">#&gt; (Intercept)  2.60007 1.81522 3.7243</span></span>
+<span><span class="co">#&gt; x1           2.02874 1.59525 2.5800</span></span>
+<span><span class="co">#&gt; x2           0.42919 0.26859 0.6858</span></span></code></pre></div>
+<p>This does predictions with the corrections …</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pred_fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logitipcw_m</span>, <span class="va">tau</span><span class="op">)</span></span>
+<span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu">pred_fun</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu">pred_fun</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"LR (corrected)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3063786</td>
+<td align="right">0.2207436</td>
+<td align="right">0.3920137</td>
+<td align="right">0.0436913</td>
+</tr>
+<tr class="even">
+<td align="right">0.1593662</td>
+<td align="right">0.0943708</td>
+<td align="right">0.2243616</td>
+<td align="right">0.0331609</td>
+</tr>
+</tbody>
+</table>
+<p>… and this does use the naive approach</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pred_fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logitipcw_m</span>, <span class="va">tau</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu">pred_fun</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu">pred_fun</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"LR (naive)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3063786</td>
+<td align="right">0.2193108</td>
+<td align="right">0.3934464</td>
+<td align="right">0.0444223</td>
+</tr>
+<tr class="even">
+<td align="right">0.1593662</td>
+<td align="right">0.0936020</td>
+<td align="right">0.2251305</td>
+<td align="right">0.0335532</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section level2">
-<h2 id="ipcw-xgboost-model">IPCW XGBoost Model<a class="anchor" aria-label="anchor" href="#ipcw-xgboost-model"></a>
+<h2 id="ipcw-jackknife-based-standard-errors">IPCW Jackknife Based Standard Errors<a class="anchor" aria-label="anchor" href="#ipcw-jackknife-based-standard-errors"></a>
 </h2>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xgbmodel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipcw_xgboost.html">ipcw_xgboost</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>,</span>
+<p>These models use standard errors calculated with the jackknife
+approach. We include our weighted approach (<code>"wJK"</code>) and the
+naive approach (<code>"nJK"</code>). See <code><a href="../reference/IPCWJK-package.html">?IPCWJK</a></code> for more
+details.</p>
+<div class="section level3">
+<h3 id="logistic-regression-with-jackknife">Logistic Regression with Jackknife<a class="anchor" aria-label="anchor" href="#logistic-regression-with-jackknife"></a>
+</h3>
+<p>Here we use the <code><a href="../reference/ipcw_logistic_regression.html">ipcw_logistic_regression()</a></code> function.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">logreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipcw_logistic_regression.html">ipcw_logistic_regression</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>,</span>
 <span>  time_var <span class="op">=</span> <span class="st">"t"</span>,</span>
-<span>  status_var <span class="op">=</span> <span class="st">"delta"</span>, verbose <span class="op">=</span> <span class="fl">0</span></span>
+<span>  status_var <span class="op">=</span> <span class="st">"delta"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">xgb_train_brier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgbmodel</span>, <span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">**</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
+<span><span class="va">logreg</span></span>
+<span><span class="co">#&gt; IPCW Model</span></span>
+<span><span class="co">#&gt; -----------</span></span>
+<span><span class="co">#&gt; Model name:  IPCW Logistic Regression </span></span>
+<span><span class="co">#&gt; Tau (time horizon):  5 </span></span>
+<span><span class="co">#&gt; Time variable:  t </span></span>
+<span><span class="co">#&gt; Status variable:  delta </span></span>
+<span><span class="co">#&gt; Training variables:  x1, x2 </span></span>
+<span><span class="co">#&gt; Number of training samples:  500 </span></span>
+<span><span class="co">#&gt; Number of unusable training samples:  116 </span></span>
+<span><span class="co">#&gt; Number of (effective) training samples:  500 </span></span>
+<span><span class="co">#&gt; Train Brier score:  0.207</span></span></code></pre></div>
+<p>These use the weighted jackknife …</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">xgbmodel</span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"LR (nJK)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3063786</td>
+<td align="right">0.2261134</td>
+<td align="right">0.4003947</td>
+<td align="right">0.0448098</td>
+</tr>
+<tr class="even">
+<td align="right">0.1593662</td>
+<td align="right">0.1038000</td>
+<td align="right">0.2368180</td>
+<td align="right">0.0336799</td>
+</tr>
+</tbody>
+</table>
+<p>… and these the unweighted jackknife.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">test_data</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">df</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"LR (wJK)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3063786</td>
+<td align="right">0.2260775</td>
+<td align="right">0.4004441</td>
+<td align="right">0.0448321</td>
+</tr>
+<tr class="even">
+<td align="right">0.1593662</td>
+<td align="right">0.1037759</td>
+<td align="right">0.2368648</td>
+<td align="right">0.0336976</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level3">
+<h3 id="xgboost-binary-classifier-with-jackknife">XGBoost Binary Classifier with Jackknife<a class="anchor" aria-label="anchor" href="#xgboost-binary-classifier-with-jackknife"></a>
+</h3>
+<p>Here we use the <code><a href="../reference/ipcw_xgboost.html">ipcw_xgboost()</a></code> function. As it is a
+machine learning model, based on a boosted learning process, there is no
+parametric calculation of the standard error possible.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">xgb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipcw_xgboost.html">ipcw_xgboost</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>,</span>
+<span>  time_var <span class="op">=</span> <span class="st">"t"</span>,</span>
+<span>  status_var <span class="op">=</span> <span class="st">"delta"</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">xgb</span></span>
 <span><span class="co">#&gt; IPCW Model</span></span>
 <span><span class="co">#&gt; -----------</span></span>
 <span><span class="co">#&gt; Model name:  IPCW XGBoost </span></span>
@@ -186,138 +458,203 @@ prediction using the delta method.</p>
 <span><span class="co">#&gt;     $eta</span></span>
 <span><span class="co">#&gt;     [1] 0.1</span></span>
 <span><span class="co">#&gt; </span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">xgbmodel_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgbmodel</span>, <span class="va">test_data</span><span class="op">)</span></span>
-<span><span class="va">xgbmodel_predictions</span></span>
-<span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3047837 0.2313039 0.3897704 0.04068547</span></span>
-<span><span class="co">#&gt; 2  0.1688837 0.1228487 0.2276913 0.02665202</span></span></code></pre></div>
+<p>These use the weighted jackknife …</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgb</span>, <span class="va">test_data</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgb</span>, <span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"XGBoost (wJK)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3047837</td>
+<td align="right">0.2254286</td>
+<td align="right">0.3977294</td>
+<td align="right">0.0442901</td>
+</tr>
+<tr class="even">
+<td align="right">0.1688837</td>
+<td align="right">0.1148774</td>
+<td align="right">0.2413561</td>
+<td align="right">0.0321043</td>
+</tr>
+</tbody>
+</table>
+<p>… and these the unweighted jackknife.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">preds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgb</span>, <span class="va">test_data</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">brier_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/brier.html" class="external-link">brier</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">xgb</span>, <span class="va">df</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">all_results</span><span class="op">[[</span><span class="st">"XGBoost (nJK)"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>preds <span class="op">=</span> <span class="va">preds</span>, brier <span class="op">=</span> <span class="va">brier_score</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">preds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="right">0.3047837</td>
+<td align="right">0.2253932</td>
+<td align="right">0.3977780</td>
+<td align="right">0.0443120</td>
+</tr>
+<tr class="even">
+<td align="right">0.1688837</td>
+<td align="right">0.1148538</td>
+<td align="right">0.2413986</td>
+<td align="right">0.0321209</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section level2">
-<h2 id="logistic-regression-model-with-logitipcw">Logistic Regression Model with logitIPCW<a class="anchor" aria-label="anchor" href="#logistic-regression-model-with-logitipcw"></a>
+<h2 id="comparison">Comparison<a class="anchor" aria-label="anchor" href="#comparison"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
-<span><span class="va">logitipcw_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">logitIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, time <span class="op">=</span> <span class="va">tau</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">logitipcw_pred_corre</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logitipcw_m</span>, <span class="va">tau</span><span class="op">)</span></span>
-<span><span class="va">logitipcw_pred_naive</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logitipcw_m</span>, <span class="va">tau</span>, naive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">pred</span> <span class="op">&lt;-</span> <span class="fu">logitipcw_pred_corre</span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span></span>
-<span><span class="va">logitipcw_train_brier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="op">(</span><span class="va">pred</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">logitipcw_m</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;    n events</span></span>
-<span><span class="co">#&gt;  500    259</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  500 clusters</span></span>
-<span><span class="co">#&gt; coeffients:</span></span>
-<span><span class="co">#&gt;             Estimate  Std.Err     2.5%    97.5% P-value</span></span>
-<span><span class="co">#&gt; (Intercept)  0.95554  0.18334  0.59620  1.31487   0e+00</span></span>
-<span><span class="co">#&gt; x1           0.70741  0.12264  0.46703  0.94779   0e+00</span></span>
-<span><span class="co">#&gt; x2          -0.84585  0.23915 -1.31458 -0.37711   4e-04</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; exp(coeffients):</span></span>
-<span><span class="co">#&gt;             Estimate    2.5%  97.5%</span></span>
-<span><span class="co">#&gt; (Intercept)  2.60007 1.81522 3.7243</span></span>
-<span><span class="co">#&gt; x1           2.02874 1.59525 2.5800</span></span>
-<span><span class="co">#&gt; x2           0.42919 0.26859 0.6858</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">logitipcw_predictions_corre</span> <span class="op">&lt;-</span> <span class="fu">logitipcw_pred_corre</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
-<span><span class="va">logitipcw_predictions_corre</span></span>
-<span><span class="co">#&gt;   prediction      lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3063786 0.22074358 0.3920137 0.04369135</span></span>
-<span><span class="co">#&gt; 2  0.1593662 0.09437084 0.2243616 0.03316091</span></span>
-<span><span class="va">logitipcw_predictions_naive</span> <span class="op">&lt;-</span> <span class="fu">logitipcw_pred_naive</span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span></span>
-<span><span class="va">logitipcw_predictions_naive</span></span>
-<span><span class="co">#&gt;   prediction      lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3063786 0.21931083 0.3934464 0.04442234</span></span>
-<span><span class="co">#&gt; 2  0.1593662 0.09360199 0.2251305 0.03355319</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="logistic-regression-model-with-ipcw">Logistic Regression Model with IPCW<a class="anchor" aria-label="anchor" href="#logistic-regression-model-with-ipcw"></a>
-</h2>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">logreg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ipcw_logistic_regression.html">ipcw_logistic_regression</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>,</span>
-<span>  time_var <span class="op">=</span> <span class="st">"t"</span>,</span>
-<span>  status_var <span class="op">=</span> <span class="st">"delta"</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">logreg_train_brier</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span> <span class="op">*</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">df</span><span class="op">)</span><span class="op">$</span><span class="va">prediction</span> <span class="op">-</span> <span class="va">y</span><span class="op">)</span><span class="op">**</span><span class="fl">2</span><span class="op">)</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">w</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">logreg</span></span>
-<span><span class="co">#&gt; IPCW Model</span></span>
-<span><span class="co">#&gt; -----------</span></span>
-<span><span class="co">#&gt; Model name:  IPCW Logistic Regression </span></span>
-<span><span class="co">#&gt; Tau (time horizon):  5 </span></span>
-<span><span class="co">#&gt; Time variable:  t </span></span>
-<span><span class="co">#&gt; Status variable:  delta </span></span>
-<span><span class="co">#&gt; Training variables:  x1, x2 </span></span>
-<span><span class="co">#&gt; Number of training samples:  500 </span></span>
-<span><span class="co">#&gt; Number of unusable training samples:  116 </span></span>
-<span><span class="co">#&gt; Number of (effective) training samples:  500 </span></span>
-<span><span class="co">#&gt; Train Brier score:  0.207</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">logreg_predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">logreg</span>, <span class="va">test_data</span><span class="op">)</span></span>
-<span><span class="va">logreg_predictions</span></span>
-<span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.3063786 0.2320556 0.3923443 0.04116160</span></span>
-<span><span class="co">#&gt; 2  0.1593662 0.1120122 0.2217405 0.02784626</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="comparison-xgboost-vs-parametric-only-for-now">Comparison (XGBoost vs Parametric only for now)<a class="anchor" aria-label="anchor" href="#comparison-xgboost-vs-parametric-only-for-now"></a>
-</h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">brier_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>  Model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Parametric"</span>, <span class="st">"XGBoost"</span><span class="op">)</span>,</span>
-<span>  Brier_Score <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">parmmodel_train_brier</span>, <span class="va">xgb_train_brier</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
+<p>We will compare the results of the models.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">all_results</span><span class="op">)</span>, palette <span class="op">=</span> <span class="st">"Dynamic"</span><span class="op">)</span></span>
+<span><span class="va">brier_scores</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">all_results</span>, <span class="st">"[["</span>, <span class="st">"brier"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span></span>
-<span>  <span class="va">brier_scores</span><span class="op">$</span><span class="va">Brier_Score</span>,</span>
-<span>  names.arg <span class="op">=</span> <span class="va">brier_scores</span><span class="op">$</span><span class="va">Model</span>,</span>
-<span>  main <span class="op">=</span> <span class="st">"Brier Scores by Model"</span>,</span>
-<span>  ylab <span class="op">=</span> <span class="st">"Brier Score"</span></span>
+<span>  <span class="va">brier_scores</span>,</span>
+<span>  col <span class="op">=</span> <span class="va">cols</span>,</span>
+<span>  names.arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">brier_scores</span><span class="op">)</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Brier Score"</span>,</span>
+<span>  las <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  cex.names <span class="op">=</span> <span class="fl">0.75</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="ipcw_models_files/figure-html/brier_scores-1.png" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">true_prob</span> <span class="op">&lt;-</span> <span class="va">test_data_true_probs</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
-<span>  <span class="va">predictions_comparison</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>    Model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Parametric"</span>, <span class="st">"XGBoost"</span><span class="op">)</span>,</span>
-<span>    Prediction <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>      <span class="va">parmmodel_predictions</span><span class="op">[</span><span class="va">i</span>, <span class="st">"Prediction"</span><span class="op">]</span>,</span>
-<span>      <span class="va">xgbmodel_predictions</span><span class="op">[</span><span class="va">i</span>, <span class="st">"prediction"</span><span class="op">]</span></span>
-<span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
+<p><img src="ipcw_models_files/figure-html/brier_scores-1.png" width="100%" style="display: block; margin: auto;"></p>
+<p>As is expected, the variance estimation has no impact on the model
+performance. The following plot shows the results for the first test
+data entry.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">i</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
+<span><span class="va">testpreds</span> <span class="op">&lt;-</span> <span class="va">all_results</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span>\<span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html" class="external-link">unlist</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">preds</span><span class="op">[</span><span class="va">i</span>, <span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span></span>
-<span>    <span class="va">predictions_comparison</span><span class="op">$</span><span class="va">Prediction</span>,</span>
-<span>    names.arg <span class="op">=</span> <span class="va">predictions_comparison</span><span class="op">$</span><span class="va">Model</span>,</span>
-<span>    main <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Test Case"</span>, <span class="va">i</span><span class="op">)</span>,</span>
-<span>    ylab <span class="op">=</span> <span class="st">"Predicted Probability"</span>,</span>
-<span>    ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">true_prob</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
-<span>    <span class="st">"topright"</span>,</span>
-<span>    legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"True Probability ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">true_prob</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>    col <span class="op">=</span> <span class="st">"red"</span>,</span>
-<span>    lwd <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>    bty <span class="op">=</span> <span class="st">"n"</span></span>
-<span>  <span class="op">)</span></span>
-<span></span>
-<span>  <span class="co"># Reset plotting area after last plot</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">test_data</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="op">}</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<p><img src="ipcw_models_files/figure-html/predictions_comparison_test_data1-1.png" width="700"></p>
+<span><span class="va">bar_centers</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">testpreds</span><span class="op">$</span><span class="va">prediction</span>,</span>
+<span>  names.arg <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">testpreds</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="va">cols</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">testpreds</span><span class="op">$</span><span class="va">upper</span><span class="op">)</span> <span class="op">*</span> <span class="fl">1.05</span><span class="op">)</span>,</span>
+<span>  las <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  cex.names <span class="op">=</span> <span class="fl">0.75</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="st">"Prediction"</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/arrows.html" class="external-link">arrows</a></span><span class="op">(</span></span>
+<span>  x0 <span class="op">=</span> <span class="va">bar_centers</span>, y0 <span class="op">=</span> <span class="va">testpreds</span><span class="op">$</span><span class="va">lower</span>,</span>
+<span>  x1 <span class="op">=</span> <span class="va">bar_centers</span>, y1 <span class="op">=</span> <span class="va">testpreds</span><span class="op">$</span><span class="va">upper</span>,</span>
+<span>  angle <span class="op">=</span> <span class="fl">90</span>, code <span class="op">=</span> <span class="fl">3</span>, length <span class="op">=</span> <span class="fl">0.05</span>, lwd <span class="op">=</span> <span class="fl">1.5</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">test_data_true_probs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, col <span class="op">=</span> <span class="st">"red"</span>, lwd <span class="op">=</span> <span class="fl">2</span>, lty <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html" class="external-link">legend</a></span><span class="op">(</span></span>
+<span>  <span class="st">"topright"</span>,</span>
+<span>  legend <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"True Probability ="</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">test_data_true_probs</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  col <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  lwd <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  lty <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  bty <span class="op">=</span> <span class="st">"n"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p><img src="ipcw_models_files/figure-html/predictions_comparison_test_data1-1.png" width="100%" style="display: block; margin: auto;"></p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="va">testpreds</span><span class="op">)</span></span></code></pre></div>
+<table class="table">
+<thead><tr class="header">
+<th align="left"></th>
+<th align="right">prediction</th>
+<th align="right">lower</th>
+<th align="right">upper</th>
+<th align="right">se</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Parametric</td>
+<td align="right">0.3191662</td>
+<td align="right">0.2546988</td>
+<td align="right">0.3836337</td>
+<td align="right">0.0328916</td>
+</tr>
+<tr class="even">
+<td align="left">LR (corrected)</td>
+<td align="right">0.3063786</td>
+<td align="right">0.2207436</td>
+<td align="right">0.3920137</td>
+<td align="right">0.0436913</td>
+</tr>
+<tr class="odd">
+<td align="left">LR (naive)</td>
+<td align="right">0.3063786</td>
+<td align="right">0.2193108</td>
+<td align="right">0.3934464</td>
+<td align="right">0.0444223</td>
+</tr>
+<tr class="even">
+<td align="left">LR (nJK)</td>
+<td align="right">0.3063786</td>
+<td align="right">0.2261134</td>
+<td align="right">0.4003947</td>
+<td align="right">0.0448098</td>
+</tr>
+<tr class="odd">
+<td align="left">LR (wJK)</td>
+<td align="right">0.3063786</td>
+<td align="right">0.2260775</td>
+<td align="right">0.4004441</td>
+<td align="right">0.0448321</td>
+</tr>
+<tr class="even">
+<td align="left">XGBoost (wJK)</td>
+<td align="right">0.3047837</td>
+<td align="right">0.2254286</td>
+<td align="right">0.3977294</td>
+<td align="right">0.0442901</td>
+</tr>
+<tr class="odd">
+<td align="left">XGBoost (nJK)</td>
+<td align="right">0.3047837</td>
+<td align="right">0.2253932</td>
+<td align="right">0.3977780</td>
+<td align="right">0.0443120</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section level2 unnumbered">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
+<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="ref-Blanche2023" class="csl-entry">
+Blanche, Paul Frédéric, Anders Holt, and Thomas Scheike. 2023.
+<span>“<span class="nocase">On logistic regression with right censored
+data, with or without competing risks, and its use for estimating
+treatment effects</span>.”</span> <em>Lifetime Data Analysis</em> 29
+(2): 441–82. <a href="https://doi.org/10.1007/s10985-022-09564-6" class="external-link">https://doi.org/10.1007/s10985-022-09564-6</a>.
+</div>
+<div id="ref-mets1" class="csl-entry">
+Holst, Klaus K., Thomas H. Scheike, and Jacob B. Hjelmborg. 2016.
+<span>“The Liability Threshold Model for Censored Twin Data.”</span>
+<em>Computational Statistics and Data Analysis</em> 93: 324–35. <a href="https://doi.org/10.1016/j.csda.2015.01.014" class="external-link">https://doi.org/10.1016/j.csda.2015.01.014</a>.
+</div>
+<div id="ref-mets2" class="csl-entry">
+Scheike, Thomas H., Klaus K. Holst, and Jacob B.Hjelmborg. 2014.
+<span>“Estimating Heritability for Cause Specific Mortality Based on
+Twin Studies.”</span> <em>Lifetime Data Analysis</em> 20 (2): 210–33. <a href="https://doi.org/10.1007/s10985-013-9244-x" class="external-link">https://doi.org/10.1007/s10985-013-9244-x</a>.
+</div>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

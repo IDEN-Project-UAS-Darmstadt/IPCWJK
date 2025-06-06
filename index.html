@@ -17,8 +17,8 @@
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="IPCW Jackknife Methods for Standard Errors in Survival Prediction">
-<meta name="description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements Jackknife resampling methods for unbiased prediction error estimation in survival analysis. The package supports model fitting, IPCW calculation, and Jackknife error estimation.">
-<meta property="og:description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements Jackknife resampling methods for unbiased prediction error estimation in survival analysis. The package supports model fitting, IPCW calculation, and Jackknife error estimation.">
+<meta name="description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.">
+<meta property="og:description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,44 +63,42 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co">#&gt; IPCW Jackknife Methods for Standard Errors in Survival Prediction</span></span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt; Provides functions for fitting binary classification models with</span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;  inverse probability of censoring weights (IPCW) to estimate survival </span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt;  probabilities, and implements Jackknife resampling methods for unbiased </span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt;  prediction error estimation in survival analysis. The package supports model </span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt;  fitting, IPCW calculation, and Jackknife error estimation.</span></span></code></pre></div>
-<p>The documentation is available at <a href="https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK" class="external-link uri">https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK</a></p>
+<p>IPCW Jackknife Methods for Standard Errors in Survival Prediction</p>
+<p>Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.</p>
+<p>The documentation is available at <a href="https://iden-project-uas-darmstadt.github.io/IPCWJK/" class="uri">https://iden-project-uas-darmstadt.github.io/IPCWJK/</a></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the development version of IPCWJK like so:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># With remotes</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span>
 <span><span class="co"># With pak (recommended for speed)</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu">pkg_install</span><span class="op">(</span><span class="st">"IDEN-Project-UAS-Darmstadt/IPCWJK"</span><span class="op">)</span></span></code></pre></div>
+<p>Releases of the library can be found <a href="https://github.com/IDEN-Project-UAS-Darmstadt/IPCWJK/releases" class="external-link">here</a>.</p>
 </div>
 <div class="section level2">
-<h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
+<h2 id="examples">Examples<a class="anchor" aria-label="anchor" href="#examples"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<p>IPCW weights can be calculated with the <code>ipcw_weights</code> function.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/therneau/survival" class="external-link">survival</a></span><span class="op">)</span></span>
-<span><span class="va">tau</span> <span class="op">&lt;-</span> <span class="fl">80</span></span>
-<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">veteran</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"status"</span>, <span class="st">"trt"</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>trt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">tau</span> <span class="op">&lt;-</span> <span class="fl">100</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">veteran</span><span class="op">[</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"time"</span>, <span class="st">"status"</span>, <span class="st">"karno"</span>, <span class="st">"age"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">newdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>karno <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">80</span>, <span class="fl">70</span><span class="op">)</span>, age <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">40</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculation of IPCW weights at tau</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">IPCWJK</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://iden-project-uas-darmstadt.github.io/IPCWJK">IPCWJK</a></span><span class="op">)</span></span>
 <span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipcw_weights.html">ipcw_weights</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">tau</span>, time_var <span class="op">=</span> <span class="st">"time"</span>, status_var <span class="op">=</span> <span class="st">"status"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">w</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="fl">30</span>,</span>
 <span>  xlab <span class="op">=</span> <span class="st">"IPCW Weight"</span>, col <span class="op">=</span> <span class="st">"lightblue"</span>, border <span class="op">=</span> <span class="st">"grey"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-data_weights-1.png" width="100%"></p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<p>For <code>survreg</code> models with a log-logistic distribution and <code>logitIPCW</code> we provide convenient access to Wald confidence intervals based on the delta method on the logit scale.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Fit a log-logistic survival model</span></span>
-<span><span class="va">survreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">trt</span>,</span>
+<span><span class="va">survreg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survreg</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/survival/man/Surv.html" class="external-link">Surv</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">karno</span> <span class="op">+</span> <span class="va">age</span>,</span>
 <span>  data <span class="op">=</span> <span class="va">df</span>,</span>
 <span>  dist <span class="op">=</span> <span class="st">"loglogistic"</span></span>
 <span><span class="op">)</span></span>
@@ -108,34 +106,38 @@
 <span><span class="va">pred_fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">survreg_fit</span>, tau <span class="op">=</span> <span class="va">tau</span><span class="op">)</span></span>
 <span><span class="fu">pred_fun</span><span class="op">(</span><span class="va">newdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.4834551 0.3802014 0.5867088 0.05268045</span></span>
-<span><span class="co">#&gt; 2  0.4130325 0.3106990 0.5153660 0.05221096</span></span>
+<span><span class="co">#&gt; 1  0.6087168 0.4506212 0.7668123 0.08066101</span></span>
+<span><span class="co">#&gt; 2  0.4815100 0.3795966 0.5834235 0.05199666</span></span>
 <span></span>
 <span><span class="co"># Fit a logitIPCW model</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
-<span><span class="va">logipcw_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">logitIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">trt</span>, time <span class="op">=</span> <span class="va">tau</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
-<span><span class="va">predfun_logit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logipcw_fit</span>, tau <span class="op">=</span> <span class="va">tau</span><span class="op">)</span></span>
+<span><span class="va">logipcw_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">logitIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">time</span>, <span class="va">status</span><span class="op">)</span> <span class="op">~</span> <span class="va">karno</span> <span class="op">+</span> <span class="va">age</span>,</span>
+<span>  time <span class="op">=</span> <span class="va">tau</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">df</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">pred_fun</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/deltamethod_from_model.html">deltamethod_from_model</a></span><span class="op">(</span><span class="va">logipcw_fit</span>, tau <span class="op">=</span> <span class="va">tau</span><span class="op">)</span></span>
 <span><span class="fu">pred_fun</span><span class="op">(</span><span class="va">newdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.4834551 0.3802014 0.5867088 0.05268045</span></span>
-<span><span class="co">#&gt; 2  0.4130325 0.3106990 0.5153660 0.05221096</span></span>
-<span></span>
-<span><span class="co"># IPCW Logistic Regression</span></span>
+<span><span class="co">#&gt; 1  0.7406860 0.5672413 0.9141306 0.08849216</span></span>
+<span><span class="co">#&gt; 2  0.5808678 0.4513883 0.7103472 0.06606092</span></span></code></pre></div>
+<p>Models using IPCW are also available. For these, we provide the jackknife-based estimation of the standard error and Wald confidence intervals based on the delta method on the logit scale.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># IPCW Logistic Regression</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipcw_logistic_regression.html">ipcw_logistic_regression</a></span><span class="op">(</span><span class="va">df</span>,</span>
 <span>  tau <span class="op">=</span> <span class="va">tau</span>, time_var <span class="op">=</span> <span class="st">"time"</span>,</span>
 <span>  status_var <span class="op">=</span> <span class="st">"status"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">newdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.5602241 0.4397994 0.6739532 0.06084509</span></span>
-<span><span class="co">#&gt; 2  0.4277286 0.3149444 0.5485602 0.06069209</span></span>
+<span><span class="co">#&gt; 1  0.7477355 0.5387945 0.8826380 0.08960564</span></span>
+<span><span class="co">#&gt; 2  0.5819723 0.4455359 0.7069205 0.06821779</span></span>
 <span></span>
 <span><span class="co"># IPCW XGBoost Classifier</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/ipcw_xgboost.html">ipcw_xgboost</a></span><span class="op">(</span><span class="va">df</span>, tau <span class="op">=</span> <span class="va">tau</span>, time_var <span class="op">=</span> <span class="st">"time"</span>, status_var <span class="op">=</span> <span class="st">"status"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">newdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   prediction     lower     upper         se</span></span>
-<span><span class="co">#&gt; 1  0.4919162 0.4324719 0.5515900 0.03053219</span></span>
-<span><span class="co">#&gt; 2  0.4809798 0.3994607 0.5635243 0.04223412</span></span></code></pre></div>
+<span><span class="co">#&gt; 1  0.7654250 0.5621175 0.8924056 0.08545969</span></span>
+<span><span class="co">#&gt; 2  0.5937184 0.4579942 0.7164942 0.06741503</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level1">
@@ -144,7 +146,7 @@
 <p>Restore the development environment with:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">renv</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/renv/reference/restore.html" class="external-link">restore</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>then use anything available in the <code>devtools</code> package to develop the package.</p>
+<p>Then use anything available in the <code>devtools</code> package to develop the package.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://devtools.r-lib.org/" class="external-link">devtools</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://devtools.r-lib.org/reference/document.html" class="external-link">document</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to update documentation and roxygen functionality</span></span>

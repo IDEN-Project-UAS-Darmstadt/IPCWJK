@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,9 +42,9 @@
     </div>
 
     <div class="section level2">
-      <h2 id="package-and-helpers">Package and Helpers<a class="anchor" aria-label="anchor" href="#package-and-helpers"></a></h2>
+      <h2 id="central-information-and-functions">Central Information and Functions<a class="anchor" aria-label="anchor" href="#central-information-and-functions"></a></h2>
 
-      <div class="section-desc"><p>The package itself and helpers</p></div>
+
 
 
     </div><div class="section level2">
@@ -57,7 +57,13 @@
           <code><a href="IPCWJK-package.html">IPCWJK</a></code> <code><a href="IPCWJK-package.html">IPCWJK-package</a></code>
 
         </dt>
-        <dd>IPCWJK: IPCW Jackknife SE Estimation for right-censored survival data <script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script></dd>
+        <dd>IPCWJK: IPCW jackknife SE Estimation for right-censored survival data <script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script></dd>
+      </dl><dl><dt>
+
+          <code><a href="ipcw_weights.html">ipcw_weights()</a></code>
+
+        </dt>
+        <dd>Use a Kaplan-Meier estimator to estimate IPCW weights</dd>
       </dl><dl><dt>
 
           <code><a href="deltamethod_from_model.html">deltamethod_from_model()</a></code>
@@ -69,13 +75,7 @@
           <code><a href="deltamethod_pred_function.html">deltamethod_pred_function()</a></code>
 
         </dt>
-        <dd>Apply the delta method based on a prediction formula</dd>
-      </dl><dl><dt>
-
-          <code><a href="ipcw_weights.html">ipcw_weights()</a></code>
-
-        </dt>
-        <dd>Use a Kaplan-Meier estimator to estimate IPCW weights</dd>
+        <dd>Predict the standard error from a prediction formula using the delta method</dd>
       </dl></div><div class="section level2">
       <h2 id="ipcw-models">IPCW Models<a class="anchor" aria-label="anchor" href="#ipcw-models"></a></h2>
 
@@ -89,6 +89,12 @@
 
       <dl><dt>
 
+          <code><a href="ipcwmodel.html">ipcwmodel()</a></code> <code><a href="ipcwmodel.html">predict(<i>&lt;ipcwmodel&gt;</i>)</a></code>
+
+        </dt>
+        <dd>IPCW Model Class</dd>
+      </dl><dl><dt>
+
           <code><a href="ipcw_logistic_regression.html">ipcw_logistic_regression()</a></code>
 
         </dt>
@@ -99,23 +105,6 @@
 
         </dt>
         <dd>IPCW XGBoost Binary Classifier</dd>
-      </dl></div><div class="section level2">
-      <h2 id="ipcw-base-class">IPCW Base Class<a class="anchor" aria-label="anchor" href="#ipcw-base-class"></a></h2>
-
-      <div class="section-desc"><p>Base class for IPCW models.</p></div>
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="ipcwmodel.html">ipcwmodel()</a></code> <code><a href="ipcwmodel.html">predict(<i>&lt;ipcwmodel&gt;</i>)</a></code>
-
-        </dt>
-        <dd>IPCW Model Class</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
