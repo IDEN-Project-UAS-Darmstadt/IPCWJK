@@ -101,8 +101,8 @@ predict(fit, newdata)
 fit <- ipcw_xgboost(df, tau = tau, time_var = "time", status_var = "status")
 predict(fit, newdata)
 #>   prediction     lower     upper         se
-#> 1  0.7654250 0.5621175 0.8924056 0.08545969
-#> 2  0.5937184 0.4579942 0.7164942 0.06741503
+#> 1  0.7708235 0.5687163 0.8956051 0.08439328
+#> 2  0.5974076 0.4615320 0.7198115 0.06734963
 ```
 
 # Development

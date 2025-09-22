@@ -29,7 +29,7 @@ interval calculation (default is 1.96 for 95\% confidence intervals).
 \description{
 \loadmathjax
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon \mjeqn{|tau}{tau} from a fitted model,
+at a specified time horizon \mjeqn{\tau}{tau} from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method.
 }
