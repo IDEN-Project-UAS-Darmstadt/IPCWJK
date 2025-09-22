@@ -2,7 +2,12 @@
 
 * Initial package functionality
 
-# IPCWJK 0.0.0.9000
+# IPCWJK 0.1.0.9000
 
-Testing release
+## Major changes
 
+* Initial package functionality
+
+## Minor improvements and bug fixes
+
+* None

@@ -1,8 +1,8 @@
-#' Apply the delta method based on a prediction formula
+#' Predict the standard error from a prediction formula using the delta method
 #'
 #' @description
 #' \loadmathjax
-#' Constructs a prediction function that computes model predictions and
+#' Constructs a prediction function that computes model predictions,
 #' their standard errors and Wald confidence interval using the delta method
 #' for a user-specified prediction formula.
 #'
@@ -11,11 +11,11 @@
 #' regression models, including those for survival analysis, and allows
 #' flexible specification of the linear predictor, additional coefficients,
 #' and fixed covariate values. The resulting function can be applied to
-#' new data to obtain both predictions and delta method-based standard
-#' errors.
+#' new data to obtain predictions, delta method-based standard
+#' errors and confidence intervals.
 #'
-#' This function is used internally in the package to provide
-#' delta method-based standard errors for as a comparison.
+#' This function is used internally in the package by
+#' [deltamethod_from_model()].
 #'
 #' For a prediction function
 #' \mjeqn{g(\theta)}{g(theta)}, the standard error is approximated as
@@ -24,38 +24,40 @@
 #' where \mjeqn{\Sigma}{Sigma} is the covariance matrix of the estimated
 #' coefficients.
 #'
-#' The input \code{prediction_str} must contain one occurrence of
-#' \code{"LP"}, which will be replaced by the linear predictor constructed
+#' The input `prediction_str` must contain one occurrence of
+#' `"LP"`, which will be replaced by the linear predictor constructed
 #' from the provided coefficients and covariate values.
 #'
+#' With `logit=TRUE` the confidence intervals can be calculated on a logit
+#' scale, see [IPCWJK] for more information.
+#'
 #' @param prediction_str Character. A string specifying the prediction formula,
-#'   which must contain one occurrence of \code{"LP"} to be replaced by
+#'   which must contain one occurrence of `"LP"` to be replaced by
 #'   the linear predictor constructed from the coefficients and covariate
 #'   values.
 #' @param coefs Named numeric vector. The estimated coefficients from the fitted
 #'   model. The names must correspond to the covariate names used in the model.
 #' @param coef_cov Square numeric matrix. The covariance matrix of the estimated
-#'   coefficients. The row and column names must match the names of
-#'   \code{coefs}.
+#'   coefficients in `coefs`. The row and column names
+#'   must match the names of `coefs`.
 #' @param additional_coefs Character vector. Names of coefficients in
-#'   \code{coefs} that are not part of the linear predictor but are required in
-#'   the prediction formula (default is an empty character vector).
-#' @param fixed_vars List. Named list of fixed values for variables used in the
-#'   prediction formula but not present in the new data (default is an empty
-#'   list).
-#' @param logit Logical. If \code{TRUE}, the delta method is used on the
+#'   `coefs` that are not part of the linear predictor but are required in
+#'   the prediction formula (default is an empty character vector). An
+#'   example is the estimated scale from a parametric survival model.
+#' @param fixed_vars Named numeric vector. Fixed values for variables used in
+#'   the prediction formula but not present in the new data (default is an empty
+#'   numeric vector).
+#' @param logit Logical. `TRUE`, the delta method is used on the
 #'        logit scale. This ensures CIs are between 0 and 1 (default is
-#'        \code{TRUE}).
-#' @return A function that takes a data frame of covariates and returns a
-#'   data frame with columns for the prediction, lower and upper Wald
-#'   confidence intervals, and standard error. The function can also take
-#'   an optional argument \code{z} for the z-score used in confidence
-#'   interval calculation (default is 1.96 for 95% CI).
+#'        `TRUE`).
+#' @return A `function(df, z = 1.96)` that takes a data frame of covariates
+#'   `df` and returns a data frame with columns for the
+#'   prediction `prediction`, lower `lower` and upper `upper` Wald
+#'   confidence intervals, and standard error `se`. The function can also take
+#'   an optional argument `z` for the z-score used in confidence
+#'   interval calculation (default is 1.96 for 95% confidence intervals).
 #' @import mathjaxr
 #' @importFrom Rdpack reprompt
-#' @references
-#' \insertAllCited{}
-#' @family helpers
 #' @examples
 #' coefs <- c("(Intercept)" = 0.5, "age" = 0.1, "sex" = -0.2)
 #' coef_cov <- diag(c(0.01, 0.0025, 0.0025))
@@ -73,9 +75,12 @@ deltamethod_pred_function <- function(
     coefs,
     coef_cov,
     additional_coefs = character(),
-    fixed_vars = list(),
+    fixed_vars = numeric(),
     logit = FALSE) {
   coef_names <- names(coefs)
+  if (is.null(coef_names)) {
+    stop("coef_names must have names")
+  }
   if (!all(additional_coefs %in% coef_names)) {
     stop("additional_coefs must be a subset of the names of coefs")
   }
@@ -94,6 +99,9 @@ deltamethod_pred_function <- function(
   }
   if (length(grep("LP", prediction_str)) != 1) {
     stop("prediction_str must contain LP")
+  }
+  if (!is.vector(fixed_vars, mode = "numeric")) {
+    stop("fixed_vars must be numeric.")
   }
 
   lpcoefs_sel <- !coef_names %in% additional_coefs

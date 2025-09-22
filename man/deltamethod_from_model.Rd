@@ -8,8 +8,8 @@ deltamethod_from_model(model, tau, naive = FALSE)
 }
 \arguments{
 \item{model}{A fitted model object. Supported types are
-\code{survreg} with log-logistic distribution and \code{binreg}
-(e.g., from \code{logitIPCW}).}
+\code{\link[survival:survreg]{survival::survreg()}} with log-logistic distribution and
+\code{\link[mets:binreg]{mets::logitIPCW()}}.}
 
 \item{tau}{Numeric scalar. The time horizon at which the survival
 probability is to be estimated.}
@@ -19,30 +19,31 @@ estimator for \code{binreg} models. If \code{FALSE} (default),
 use the robust variance estimator.}
 }
 \value{
-A function that takes a data frame of covariates and returns a
-data frame with columns for the prediction, lower and upper Wald
-confidence intervals, and standard error. The function can also take
+A \verb{function(df, z = 1.96)} that takes a data frame of covariates
+\code{df} and returns a data frame with columns for the
+prediction \code{prediction}, lower \code{lower} and upper \code{upper} Wald
+confidence intervals, and standard error \code{se}. The function can also take
 an optional argument \code{z} for the z-score used in confidence
-interval calculation (default is 1.96 for 95\% CI).
+interval calculation (default is 1.96 for 95\% confidence intervals).
 }
 \description{
 \loadmathjax
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon \mjeqn{tau}{tau} from a fitted survival model,
+at a specified time horizon \mjeqn{|tau}{tau} from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method.
 }
 \details{
-The function supports models of class \code{survreg} with
+The function supports models of from \code{\link[survival:survreg]{survival::survreg()}}
 log-logistic distribution and models of class \code{binreg}
-(such as those fitted by \code{logitIPCW}). For \code{binreg} models,
+(such as those fitted by \code{\link[mets:binreg]{mets::logitIPCW()}})
+\insertCite{Blanche2023,mets1,mets2}{IPCWJK}. For \code{binreg} models,
 the function can use either the naive or the robust variance estimator,
 depending on the value of the \code{naive} argument.
 }
 \examples{
-# veteran data example
 library(survival)
-tau <- 80
+tau <- 100
 df <- veteran[, c("time", "status", "trt")]
 newdata <- data.frame(trt = c(1, 2))
 
@@ -65,8 +66,6 @@ pred_fun(newdata)
 \insertAllCited{}
 }
 \seealso{
-Other helpers: 
-\code{\link{deltamethod_pred_function}()},
-\code{\link{ipcw_weights}()}
+\code{\link[=deltamethod_pred_function]{deltamethod_pred_function()}} for the underlying implementation and
+\link{IPCWJK} for confidence interval calculation
 }
-\concept{helpers}

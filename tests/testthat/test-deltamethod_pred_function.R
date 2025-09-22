@@ -83,7 +83,7 @@ test_that("deltamethod_pred_function uses fixed_vars correctly", {
     prediction_str = "1 / (1 + exp(-(LP + grad)))",
     coefs = coefs,
     coef_cov = coef_cov,
-    fixed_vars = list(grad = 0.3)
+    fixed_vars = c(grad = 0.3)
   )
   newdata <- data.frame(age = 40, sex = 1)
   preds <- pred_fun(newdata)

@@ -54,7 +54,7 @@ the model object (default is an empty list).}
 are to be made.}
 
 \item{naive}{Logical. If \code{TRUE}, use the naive jackknife variance
-estimator. If \code{FALSE}, use the IPCW-weighted estimator.}
+estimator. If \code{False}, use the IPCW-weighted estimator.}
 
 \item{z}{Numeric. The z-score to use for the confidence interval.
 Default is 1.96, corresponding to a 95\% confidence interval.}
@@ -66,30 +66,27 @@ An object of class \code{ipcwmodel} containing the model details.
 }
 \description{
 \loadmathjax
-The resulting object contains the fitted model, jackknife resamples,
-prediction function, training Brier score, and metadata about the model.
+\code{ipcwmodel} objects contain the fitted model, models fitted on jackknife
+samples, the prediction function, training Brier score, and
+metadata about the model.
 }
 \details{
-Constructs an object of class \code{ipcwmodel}.
-
 Models can be used by calling the \code{predict(model, newdata)} method.
-It returns a data frame with columns for the prediction, lower and upper
-confidence intervals, and standard error.
+It returns a data frame with columns for the
+prediction \code{prediction}, lower \code{lower} and upper \code{upper} Wald
+confidence intervals, and standard error \code{se}. The function can also take
+an optional argument \code{z} for the z-score used in confidence
+interval calculation.
 
 The confidence intervals and standard errors can be computed using either
 the naive approach (using the number of jackknife models minus one as the
 denominator) or the robust approach (using the IPCW weights). This
 is controlled by the \code{naive} argument in the \code{predict} method.
-
-The confidence intervals then are computed using the Wald
-approach (using a z-score, default is 1.96 for 95\% CI).
+The Wald confidence intervals are calculated on the logit scale.
+See \link{IPCWJK} for more information.
 }
 \section{Methods (by generic)}{
 \itemize{
 \item \code{predict(ipcwmodel)}: Predict method for \code{ipcwmodel} objects.
 
 }}
-\references{
-\insertAllCited{}
-}
-\concept{ipcwbaseclass}

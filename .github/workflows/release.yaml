@@ -1,4 +1,4 @@
-#on:
+on:
   push:
     branches: [main, dev]
 
@@ -44,6 +44,7 @@ jobs:
       - name: tagname
         run: |
            echo "name=v${TAGNAME}${SUFFIX}" >> $GITHUB_OUTPUT
+           echo "v${TAGNAME}${SUFFIX}"
         env:
           TAGNAME: ${{steps.version.outputs.version}}
           SUFFIX: ${{ (github.head_ref || github.ref_name ) != 'main' && '_dev' || '' }}
@@ -58,7 +59,7 @@ jobs:
             github.rest.git.createRef({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              ref: `tags/${title}`,
+              ref: `refs/tags/${title}`,
               sha: context.sha
             }).catch(err => {
              if (err.status !== 422) throw err;

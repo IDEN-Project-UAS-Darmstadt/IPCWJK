@@ -8,26 +8,26 @@
 #'
 #' @details
 #' Training is performed using the `xgboost` package
-#' \insertCite{xgboost}{IPCWJK}. The weights are calculated using the
-#' @seealso \code{\link{ipcw_weights}} function, and then normalized to sum
-#' to one.
+#' \insertCite{xgboost}{IPCWJK} based on the `"binary:logistic"` objective.
 #'
-#' Hyperparameter tuning is performed using three fold cross-validation with a
-#' grid of parameters. The best parameters are selected based on the minimum
-#' test log loss over 100 rounds with early stopping (10 rounds).
+#' Hyperparameter tuning is done using three (`nfold`) fold cross-validation
+#' with a grid of parameters. The best parameters are selected based on the
+#' minimum test log loss over 100 (`nrounds`) rounds with early stopping
+#' (10 rounds, `early_stopping_rounds`).
 #' Note that the tested hyperparameters are
-#' based on our simulations study and may not be optimal for all datasets.
+#' based on our simulation and will not be useful for all datasets.
 #'
 #' The tested hyperparameters include:
-#' * `booster`: "gbtree" or "gblinear". For "gbtree":
+#' * `booster`: `"gbtree"` or `"gblinear"`.
 #' * `eta`: Learning rate, tested as `1 / 10^(0:5)`.
-#' * `max_depth`: Maximum depth of the tree, tested as `c(12, 6, 3, 1)`.
+#' * For`booster="gblinear"`:
+#'   * `max_depth`: Maximum depth of the tree, tested as `c(12, 6, 3, 1)`.
 #'
 #' With the best parameters, the model is trained on the full dataset.
 #'
 #' @inheritParams ipcw_weights
 #' @param grid Data frame. Grid of hyperparameters to test in cross-validation.
-#'   The default is the output of \code{ipcw_xgboost_default_grid()}.
+#'   The default is the return of `ipcw_xgboost_default_grid()``.
 #' @param nrounds Integer. Maximum number of boosting rounds for XGBoost
 #'   training and cross-validation (default is 100).
 #' @param early_stopping_rounds Integer. Number of rounds with no improvement
@@ -37,17 +37,18 @@
 #'   cross-validation (default is 0).
 #' @param nthread Integer. Number of threads to use for XGBoost training
 #'   (default is 1).
-#' @return An object of class \code{IPCWModel}.
+#' @return An object of class [ipcwmodel].
+#' @seealso [ipcw_weights()] for the underlying implementation of the weights
+#' and [IPCWJK] for more information.
 #' @import xgboost
 #' @importFrom Rdpack reprompt
 #' @import mathjaxr
 #' @references
 #' \insertAllCited{}
-#' @family ipcwmodels
+#' @family IPCW models
 #' @examples
-#' #' # veteran data example
 #' library(survival)
-#' tau <- 80
+#' tau <- 100
 #' df <- veteran[, c("time", "status", "trt")]
 #' newdata <- data.frame(trt = c(1, 2))
 #'
