@@ -71,12 +71,13 @@
 #' pred_fun(newdata)
 #' @export
 deltamethod_pred_function <- function(
-    prediction_str,
-    coefs,
-    coef_cov,
-    additional_coefs = character(),
-    fixed_vars = numeric(),
-    logit = FALSE) {
+  prediction_str,
+  coefs,
+  coef_cov,
+  additional_coefs = character(),
+  fixed_vars = numeric(),
+  logit = FALSE
+) {
   coef_names <- names(coefs)
   if (is.null(coef_names)) {
     stop("coef_names must have names")

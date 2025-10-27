@@ -3,12 +3,12 @@
 #' @description
 #' \loadmathjax
 #' Fits a binary classification model using XGBoost with IPCW for
-#' right-censored survival data. Hyperparameter tuning and Jackknife
-#' model training are performed.
+#' right-censored survival data.
 #'
 #' @details
 #' Training is performed using the `xgboost` package
 #' \insertCite{xgboost}{IPCWJK} based on the `"binary:logistic"` objective.
+#' Jackknife refits are computed to derive jackknife-based standard errors.
 #'
 #' Hyperparameter tuning is done using three (`nfold`) fold cross-validation
 #' with a grid of parameters. The best parameters are selected based on the
@@ -25,9 +25,11 @@
 #'
 #' With the best parameters, the model is trained on the full dataset.
 #'
+#' XGBoost does not support categorical variables directly.
+#'
 #' @inheritParams ipcw_weights
 #' @param grid Data frame. Grid of hyperparameters to test in cross-validation.
-#'   The default is the return of `ipcw_xgboost_default_grid()``.
+#'   The default is the return of `ipcw_xgboost_default_grid()`.
 #' @param nrounds Integer. Maximum number of boosting rounds for XGBoost
 #'   training and cross-validation (default is 100).
 #' @param early_stopping_rounds Integer. Number of rounds with no improvement
@@ -39,7 +41,7 @@
 #'   (default is 1).
 #' @return An object of class [ipcwmodel].
 #' @seealso [ipcw_weights()] for the underlying implementation of the weights
-#' and [IPCWJK] for more information.
+#' and [IPCWJK] as well as \insertCite{paper}{IPCWJK} for more information.
 #' @import xgboost
 #' @importFrom Rdpack reprompt
 #' @import mathjaxr
@@ -59,11 +61,12 @@
 #' predict(fit, newdata)
 #' @export
 ipcw_xgboost <- function(
-    data, tau, time_var = "t", status_var = "delta",
-    verbose = 0, grid = ipcw_xgboost_default_grid(),
-    nrounds = 100, early_stopping_rounds = 10,
-    nfold = 3,
-    nthread = 1) {
+  data, tau, time_var = "t", status_var = "delta",
+  verbose = 0, grid = ipcw_xgboost_default_grid(),
+  nrounds = 100, early_stopping_rounds = 10,
+  nfold = 3,
+  nthread = 1
+) {
   n <- nrow(data)
   w <- ipcw_weights(data, tau, time_var = time_var, status_var = status_var)
   # Normalize weights

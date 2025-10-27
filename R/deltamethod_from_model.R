@@ -9,7 +9,7 @@
 #'
 #' @details
 #' The function supports models of from [survival::survreg()]
-# \insertCite{survival-package}{IPCWJK} with
+#' \insertCite{survival-package}{IPCWJK} with
 #' log-logistic distribution and models of class `binreg`
 #' (such as those fitted by [mets::logitIPCW()])
 #' \insertCite{Blanche2023,mets1,mets2}{IPCWJK}. For `binreg` models,

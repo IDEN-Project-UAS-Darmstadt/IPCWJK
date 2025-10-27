@@ -35,6 +35,7 @@ using the delta method.
 }
 \details{
 The function supports models of from \code{\link[survival:survreg]{survival::survreg()}}
+\insertCite{survival-package}{IPCWJK} with
 log-logistic distribution and models of class \code{binreg}
 (such as those fitted by \code{\link[mets:binreg]{mets::logitIPCW()}})
 \insertCite{Blanche2023,mets1,mets2}{IPCWJK}. For \code{binreg} models,

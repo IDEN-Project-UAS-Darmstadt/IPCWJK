@@ -39,7 +39,7 @@ Default is \code{"delta"}.}
 cross-validation (default is 0).}
 
 \item{grid}{Data frame. Grid of hyperparameters to test in cross-validation.
-The default is the return of `ipcw_xgboost_default_grid()``.}
+The default is the return of \code{ipcw_xgboost_default_grid()}.}
 
 \item{nrounds}{Integer. Maximum number of boosting rounds for XGBoost
 training and cross-validation (default is 100).}
@@ -58,12 +58,12 @@ An object of class \link{ipcwmodel}.
 \description{
 \loadmathjax
 Fits a binary classification model using XGBoost with IPCW for
-right-censored survival data. Hyperparameter tuning and Jackknife
-model training are performed.
+right-censored survival data.
 }
 \details{
 Training is performed using the \code{xgboost} package
 \insertCite{xgboost}{IPCWJK} based on the \code{"binary:logistic"} objective.
+Jackknife refits are computed to derive jackknife-based standard errors.
 
 Hyperparameter tuning is done using three (\code{nfold}) fold cross-validation
 with a grid of parameters. The best parameters are selected based on the
@@ -83,6 +83,8 @@ The tested hyperparameters include:
 }
 
 With the best parameters, the model is trained on the full dataset.
+
+XGBoost does not support categorical variables directly.
 }
 \section{Functions}{
 \itemize{
@@ -106,7 +108,7 @@ predict(fit, newdata)
 }
 \seealso{
 \code{\link[=ipcw_weights]{ipcw_weights()}} for the underlying implementation of the weights
-and \link{IPCWJK} for more information.
+and \link{IPCWJK} as well as \insertCite{paper}{IPCWJK} for more information.
 
 Other IPCW models: 
 \code{\link{ipcw_logistic_regression}()}

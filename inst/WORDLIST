@@ -3,7 +3,7 @@ Eimermacher
 Jahn
 Kaplan
 XGBoost
-quasibinomial
+binomial
 OIPCW
 SEs
 xgboost
@@ -14,3 +14,8 @@ ipcw
 cens
 geq
 ln
+doi
+al
+et
+Grieser
+Gunter

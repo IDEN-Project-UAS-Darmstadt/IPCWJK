@@ -1,11 +1,12 @@
-#' IPCWJK: IPCW jackknife SE Estimation for right-censored survival data
+#' IPCWJK: Jackknife Approach to Estimate the Prediction Uncertainty from
+#' Binary Classifiers under Right-Censoring
 #' \loadmathjax
 #'
 #' @description
 #' Provides functions for fitting binary classification models with
 #' inverse probability of censoring weights (IPCW) to estimate survival
 #' probabilities, and implements jackknife resampling methods for unbiased
-#' prediction error estimation.
+#' prediction error estimation, see \insertCite{paper}{IPCWJK}.
 #'
 #' @details
 #' For \mjeqn{n}{n} individuals we observe realizations of the random variables

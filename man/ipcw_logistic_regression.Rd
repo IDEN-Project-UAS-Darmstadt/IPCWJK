@@ -26,12 +26,14 @@ An object of class \link{ipcwmodel}.
 }
 \description{
 \loadmathjax
-Fits a logistic regression model with IPCW for
-right-censored survival data. Jackknife model training is performed.
+Fits an IPCW-weighted logistic regression for right-censored
+survival data.
 }
 \details{
-Training is performed using the \code{glm}
-using a quasibinomial family to account for the weights.
+A logistic model is fitted to the full dataset. Jackknife refits are
+computed to derive jackknife-based standard errors.
+Training is performed using \code{glm} with a binomial distribution to
+account for the IPCW weights.
 }
 \examples{
 library(survival)
@@ -47,7 +49,7 @@ predict(fit, newdata)
 }
 \seealso{
 \code{\link[=ipcw_weights]{ipcw_weights()}} for the underlying implementation of the weights
-and \link{IPCWJK} for more information.
+and \link{IPCWJK} as well as \insertCite{paper}{IPCWJK} for more information.
 
 Other IPCW models: 
 \code{\link{ipcw_xgboost}()}

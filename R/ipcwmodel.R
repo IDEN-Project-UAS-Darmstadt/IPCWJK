@@ -84,7 +84,7 @@ print.ipcwmodel <- function(x, ...) {
   cat("Status variable: ", x$status_var, "\n")
   cat("Training variables: ", paste(x$training_vars, collapse = ", "), "\n")
   cat("Number of training samples: ", length(x$w), "\n")
-  cat("Number of unusable training samples: ", sum(x$w == 0), "\n")
+  cat("Number of training samples with IPCW=0: ", sum(x$w == 0), "\n")
   w_notnorm <- x$w * length(x$w)
   cat("Number of (effective) training samples: ", sum(w_notnorm), "\n")
   cat("Train Brier score: ", round(x$train_brier, 3), "\n")
