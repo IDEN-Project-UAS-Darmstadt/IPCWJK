@@ -17,8 +17,8 @@
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="IPCW Models for Survival Analysis">
-<meta name="description" content="Doing Survival Analysis with Binary Classifiers using IPCW">
-<meta property="og:description" content="Doing Survival Analysis with Binary Classifiers using IPCW">
+<meta name="description" content="Survival Analysis with Binary Classifiers using IPCW">
+<meta property="og:description" content="Survival Analysis with Binary Classifiers using IPCW">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -254,7 +254,6 @@ use the naive and corrected estimation.</p>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://kkholst.github.io/mets/" class="external-link">mets</a></span><span class="op">)</span></span>
 <span><span class="va">logitipcw_m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">logitIPCW</a></span><span class="op">(</span><span class="fu"><a href="https://kkholst.github.io/mets/reference/Event.html" class="external-link">Event</a></span><span class="op">(</span><span class="va">t</span>, <span class="va">delta</span><span class="op">)</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, time <span class="op">=</span> <span class="va">tau</span>, data <span class="op">=</span> <span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">logitipcw_m</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;    n events</span></span>
 <span><span class="co">#&gt;  500    259</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -360,7 +359,7 @@ details.</p>
 <span><span class="co">#&gt; Status variable:  delta </span></span>
 <span><span class="co">#&gt; Training variables:  x1, x2 </span></span>
 <span><span class="co">#&gt; Number of training samples:  500 </span></span>
-<span><span class="co">#&gt; Number of unusable training samples:  116 </span></span>
+<span><span class="co">#&gt; Number of training samples with IPCW=0:  116 </span></span>
 <span><span class="co">#&gt; Number of (effective) training samples:  500 </span></span>
 <span><span class="co">#&gt; Train Brier score:  0.207</span></span></code></pre></div>
 <p>These use the weighted jackknife …</p>
@@ -445,7 +444,7 @@ parametric calculation of the standard error possible.</p>
 <span><span class="co">#&gt; Status variable:  delta </span></span>
 <span><span class="co">#&gt; Training variables:  x1, x2 </span></span>
 <span><span class="co">#&gt; Number of training samples:  500 </span></span>
-<span><span class="co">#&gt; Number of unusable training samples:  116 </span></span>
+<span><span class="co">#&gt; Number of training samples with IPCW=0:  116 </span></span>
 <span><span class="co">#&gt; Number of (effective) training samples:  500 </span></span>
 <span><span class="co">#&gt; Train Brier score:  0.207 </span></span>
 <span><span class="co">#&gt; Additional information:</span></span>

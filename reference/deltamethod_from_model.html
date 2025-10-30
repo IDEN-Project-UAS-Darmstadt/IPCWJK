@@ -8,12 +8,12 @@
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Predict the standard error from a fitted model using the delta method — deltamethod_from_model"><meta name="description" content="
 
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon \(|tau\) from a fitted model,
+at a specified time horizon \(\tau\) from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method."><meta property="og:description" content="
 
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon \(|tau\) from a fitted model,
+at a specified time horizon \(\tau\) from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -23,7 +23,7 @@ using the delta method."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@ using the delta method."></head><body>
     <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script>
 
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon <em></em>\(|tau\) from a fitted model,
+at a specified time horizon <em></em>\(\tau\) from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method.</p>
     </div>
@@ -100,6 +100,8 @@ interval calculation (default is 1.96 for 95% confidence intervals).</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The function supports models of from <code><a href="https://rdrr.io/pkg/survival/man/survreg.html" class="external-link">survival::survreg()</a></code>
+(Therneau 2024)
+ with
 log-logistic distribution and models of class <code>binreg</code>
 (such as those fitted by <code><a href="https://kkholst.github.io/mets/reference/binreg.html" class="external-link">mets::logitIPCW()</a></code>)
 (Blanche et al. 2023; Holst et al. 2016; Scheike et al. 2014)
@@ -121,7 +123,9 @@ ISSN 1380-7870, <a href="https://doi.org/10.1007/s10985-022-09564-6" class="exte
 “Estimating heritability for cause specific mortality based on twin studies.”
 <em>Lifetime Data Analysis</em>, <b>20</b>(2), 210-233.
 <a href="https://doi.org/10.1007/s10985-013-9244-x" class="external-link">doi:10.1007/s10985-013-9244-x</a>
-.</p>
+.<br><br> Therneau TM (2024).
+<em>A Package for Survival Analysis in R</em>.
+R package version 3.8-3.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

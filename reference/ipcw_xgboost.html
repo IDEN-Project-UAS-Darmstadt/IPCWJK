@@ -8,12 +8,10 @@
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="IPCW XGBoost Binary Classifier — ipcw_xgboost"><meta name="description" content="
 
 Fits a binary classification model using XGBoost with IPCW for
-right-censored survival data. Hyperparameter tuning and Jackknife
-model training are performed."><meta property="og:description" content="
+right-censored survival data."><meta property="og:description" content="
 
 Fits a binary classification model using XGBoost with IPCW for
-right-censored survival data. Hyperparameter tuning and Jackknife
-model training are performed."></head><body>
+right-censored survival data."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -21,7 +19,7 @@ model training are performed."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,8 +53,7 @@ model training are performed."></head><body>
     <p><script id="MathJax-script" async src="../../mathjaxr/doc/mathjax/es5/tex-chtml-full.js"></script>
 
 Fits a binary classification model using XGBoost with IPCW for
-right-censored survival data. Hyperparameter tuning and Jackknife
-model training are performed.</p>
+right-censored survival data.</p>
     </div>
 
     <div class="section level2">
@@ -110,7 +107,7 @@ cross-validation (default is 0).</p></dd>
 
 <dt id="arg-grid">grid<a class="anchor" aria-label="anchor" href="#arg-grid"></a></dt>
 <dd><p>Data frame. Grid of hyperparameters to test in cross-validation.
-The default is the return of `ipcw_xgboost_default_grid()“.</p></dd>
+The default is the return of <code>ipcw_xgboost_default_grid()</code>.</p></dd>
 
 
 <dt id="arg-nrounds">nrounds<a class="anchor" aria-label="anchor" href="#arg-nrounds"></a></dt>
@@ -140,7 +137,8 @@ to trigger early stopping during cross-validation (default is 10).</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Training is performed using the <code>xgboost</code> package
 (Chen and Guestrin 2016)
- based on the <code>"binary:logistic"</code> objective.</p>
+ based on the <code>"binary:logistic"</code> objective.
+Jackknife refits are computed to derive jackknife-based standard errors.</p>
 <p>Hyperparameter tuning is done using three (<code>nfold</code>) fold cross-validation
 with a grid of parameters. The best parameters are selected based on the
 minimum test log loss over 100 (<code>nrounds</code>) rounds with early stopping
@@ -152,6 +150,7 @@ based on our simulation and will not be useful for all datasets.</p>
 <li><p>For<code>booster="gblinear"</code>:</p><ul><li><p><code>max_depth</code>: Maximum depth of the tree, tested as <code>c(12, 6, 3, 1)</code>.</p></li>
 </ul></li>
 </ul><p>With the best parameters, the model is trained on the full dataset.</p>
+<p>XGBoost does not support categorical variables directly.</p>
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -169,7 +168,8 @@ ISBN 978-1-4503-4232-2, <a href="https://doi.org/10.1145/2939672.2939785" class=
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="ipcw_weights.html">ipcw_weights()</a></code> for the underlying implementation of the weights
-and <a href="IPCWJK-package.html">IPCWJK</a> for more information.</p>
+and <a href="IPCWJK-package.html">IPCWJK</a> as well as (Jahn-Eimermacher et al. 2025)
+ for more information.</p>
 <p>Other IPCW models:
 <code><a href="ipcw_logistic_regression.html">ipcw_logistic_regression</a>()</code></p></div>
     </div>

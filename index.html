@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>IPCW Jackknife Methods for Standard Errors in Survival Prediction • IPCWJK</title>
+<title>Jackknife Approach to Estimate the Prediction Uncertainty from Binary Classifiers under Right-Censoring • IPCWJK</title>
 <!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
   window.MathJax = {
     chtml: {
@@ -16,9 +16,9 @@
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="IPCW Jackknife Methods for Standard Errors in Survival Prediction">
-<meta name="description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.">
-<meta property="og:description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Jackknife Approach to Estimate the Prediction Uncertainty from Binary Classifiers under Right-Censoring">
+<meta name="description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation; see &lt;doi:10.1177/09622802251393626&gt;.">
+<meta property="og:description" content="Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation; see &lt;doi:10.1177/09622802251393626&gt;.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">IPCWJK</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,8 +63,10 @@
 </h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>IPCW Jackknife Methods for Standard Errors in Survival Prediction</p>
-<p>Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation.</p>
+<p>Jackknife Approach to Estimate the Prediction Uncertainty from Binary Classifiers under Right-Censoring</p>
+<p>Provides functions for fitting binary classification models with inverse probability of censoring weights (IPCW) to estimate survival probabilities, and implements jackknife resampling methods for unbiased prediction error estimation; see <a href="doi:10.1177/09622802251393626" class="uri">doi:10.1177/09622802251393626</a>.</p>
+<p>We described the methodology implemented in this package in our paper Jahn-Eimermacher et al. (2025).</p>
+<p>Please note that all methods implemented in this package are intended to reproduce the results presented in the paper. They may not be suitable for other use cases without further validation, especially the employed hyperparameter settings.</p>
 <p>The documentation is available at <a href="https://iden-project-uas-darmstadt.github.io/IPCWJK/" class="uri">https://iden-project-uas-darmstadt.github.io/IPCWJK/</a></p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -154,9 +156,18 @@
 <span><span class="fu"><a href="https://devtools.r-lib.org/reference/build_rmd.html" class="external-link">build_readme</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to update the README</span></span>
 <span><span class="fu"><a href="https://devtools.r-lib.org/reference/test.html" class="external-link">test</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to run tests</span></span>
 <span><span class="fu"><a href="https://devtools.r-lib.org/reference/check.html" class="external-link">check</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the package</span></span>
-<span><span class="fu">covr</span><span class="fu">::</span><span class="fu"><a href="http://covr.r-lib.org/reference/package_coverage.html" class="external-link">package_coverage</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check code coverage</span></span>
-<span><span class="fu">styler</span><span class="fu">::</span><span class="fu"><a href="https://styler.r-lib.org/reference/style_pkg.html" class="external-link">style_pkg</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to style the code</span></span>
+<span><span class="fu">covr</span><span class="fu">::</span><span class="fu">package_coverage</span><span class="op">(</span><span class="op">)</span> <span class="co"># to check code coverage</span></span>
+<span><span class="fu">styler</span><span class="fu">::</span><span class="fu">style_pkg</span><span class="op">(</span><span class="op">)</span> <span class="co"># to style the code</span></span>
 <span><span class="fu"><a href="https://devtools.r-lib.org/reference/lint.html" class="external-link">lint</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># to check the code for linting issues</span></span></code></pre></div>
+</div>
+<div class="section level1">
+<h1 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h1>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-paper" class="csl-entry">
+Jahn-Eimermacher, Antje, Lukas Klein, and Gunter Grieser. 2025. “A Jackknife Approach to Estimate the Prediction Uncertainty from Binary Classifiers Under Right-Censoring.” <em>Statistical Methods in Medical Research</em>, ahead of print. <a href="https://doi.org/10.1177/09622802251393626" class="external-link uri">https://doi.org/10.1177/09622802251393626</a>.
+</div>
+</div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
