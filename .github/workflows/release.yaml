@@ -28,6 +28,9 @@ jobs:
           # install full prebuilt version
           TINYTEX_INSTALLER: TinyTeX
       - uses: r-lib/actions/setup-renv@v2
+      - name: Install devtools
+        run: renv::install("devtools")
+        shell: Rscript {0}
       - name: build
         run: |
           Rscript -e 'renv::status()'

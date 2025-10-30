@@ -30,8 +30,12 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
+      - name: Install devtools
+        run: renv::install("devtools")
+        shell: Rscript {0}
+
       - name: Document
-        run: roxygen2::roxygenise()
+        run: devtools::document()
         shell: Rscript {0}
 
       - name: commit
