@@ -92,8 +92,8 @@ ipcw_xgboost <- function(
         nrounds = nrounds, objective = "binary:logistic",
         nfold = nfold, verbose = verbose, nthread = nthread, ...
       ),
-      warning = function(w) {
-        if (grepl("NaNs produced", conditionMessage(w))) {
+      warning = function(wrn) {
+        if (grepl("NaNs produced", conditionMessage(wrn))) {
           invokeRestart("muffleWarning")
         }
       }

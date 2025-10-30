@@ -51,8 +51,8 @@ ipcw_logistic_regression <- function(
         family = "binomial"
       )
     },
-    warning = function(w) {
-      if (grepl("non-integer", conditionMessage(w))) {
+    warning = function(wrn) {
+      if (grepl("non-integer", conditionMessage(wrn))) {
         invokeRestart("muffleWarning") # suppress this one
       }
     }
@@ -75,8 +75,8 @@ ipcw_logistic_regression <- function(
           family = "binomial"
         )
       },
-      warning = function(w) {
-        if (grepl("non-integer", conditionMessage(w))) {
+      warning = function(wrn) {
+        if (grepl("non-integer", conditionMessage(wrn))) {
           invokeRestart("muffleWarning") # suppress this one
         }
       }
