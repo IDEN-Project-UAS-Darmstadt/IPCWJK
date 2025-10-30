@@ -43,7 +43,6 @@ ipcw_logistic_regression <- function(
   dtrain <- as.data.frame(cbind(data[, training_vars], y = y))
   colnames(dtrain) <- c(training_vars, "y")
   formula <- as.formula(paste("y ~", paste(training_vars, collapse = "+")))
-  full_model <- NULL
   withCallingHandlers(
     {
       full_model <- glm(formula,
@@ -67,7 +66,6 @@ ipcw_logistic_regression <- function(
     wadj <- (n - 1) * w[-i] / (sum(w[-i]))
     dtraini <- as.data.frame(cbind(data[-i, training_vars], y = y[-i]))
     colnames(dtraini) <- c(training_vars, "y")
-    model_wjk <- NULL
     withCallingHandlers(
       {
         model_wjk <- glm(formula,
