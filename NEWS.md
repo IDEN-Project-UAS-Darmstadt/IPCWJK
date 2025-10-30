@@ -6,6 +6,7 @@
 
 * Added references to the paper
 * Improved documentation
+* Fixed CI issues
 * Closes #17, #16, #15, #14, #13, #10
 
 # IPCWJK 0.1.1.9000
@@ -18,6 +19,7 @@
 
 * Added references to the paper
 * Improved documentation
+* Fixed CI issues
 * Closes #17, #16, #15, #14, #13, #10
 
 # IPCWJK 0.1.0.9000
