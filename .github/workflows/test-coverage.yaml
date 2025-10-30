@@ -24,8 +24,8 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
-      - name: Install devtools
-        run: renv::install("devtools")
+      - name: Install covr
+        run: renv::install("covr")
         shell: Rscript {0}
 
       - name: Test coverage
