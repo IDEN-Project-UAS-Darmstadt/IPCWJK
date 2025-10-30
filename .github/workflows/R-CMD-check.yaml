@@ -42,6 +42,10 @@ jobs:
 
       - uses: r-lib/actions/setup-renv@v2
 
+      - name: Install devtools
+        run: renv::install("devtools")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true

@@ -1,5 +1,5 @@
 ---
-description: "Doing Survival Analysis with Binary Classifiers using IPCW"
+description: "Survival Analysis with Binary Classifiers using IPCW"
 title: "IPCW Models for Survival Analysis"
 output:
   rmarkdown::html_vignette:

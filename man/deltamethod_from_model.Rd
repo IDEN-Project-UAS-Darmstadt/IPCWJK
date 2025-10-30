@@ -29,12 +29,13 @@ interval calculation (default is 1.96 for 95\% confidence intervals).
 \description{
 \loadmathjax
 Constructs a prediction function that estimates the survival probability
-at a specified time horizon \mjeqn{|tau}{tau} from a fitted model,
+at a specified time horizon \mjeqn{\tau}{tau} from a fitted model,
 and computes its standard error and Wald confidence interval
 using the delta method.
 }
 \details{
 The function supports models of from \code{\link[survival:survreg]{survival::survreg()}}
+\insertCite{survival-package}{IPCWJK} with
 log-logistic distribution and models of class \code{binreg}
 (such as those fitted by \code{\link[mets:binreg]{mets::logitIPCW()}})
 \insertCite{Blanche2023,mets1,mets2}{IPCWJK}. For \code{binreg} models,

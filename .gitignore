@@ -4,3 +4,4 @@ inst/doc
 .Rhistory
 .helper
 .DS_Store
+*.Rd2pdf*

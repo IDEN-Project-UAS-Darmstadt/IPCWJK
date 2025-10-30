@@ -7,12 +7,21 @@
 
 <!-- badges: end -->
 
-IPCW Jackknife Methods for Standard Errors in Survival Prediction
+Jackknife Approach to Estimate the Prediction Uncertainty from Binary
+Classifiers under Right-Censoring
 
 Provides functions for fitting binary classification models with inverse
 probability of censoring weights (IPCW) to estimate survival
 probabilities, and implements jackknife resampling methods for unbiased
-prediction error estimation.
+prediction error estimation; see <doi:10.1177/09622802251393626>.
+
+We described the methodology implemented in this package in our paper
+Jahn-Eimermacher et al. (2025).
+
+Please note that all methods implemented in this package are intended to
+reproduce the results presented in the paper. They may not be suitable
+for other use cases without further validation, especially the employed
+hyperparameter settings.
 
 The documentation is available at
 <https://iden-project-uas-darmstadt.github.io/IPCWJK/>
@@ -127,3 +136,18 @@ covr::package_coverage() # to check code coverage
 styler::style_pkg() # to style the code
 lint() # to check the code for linting issues
 ```
+
+# References
+
+<div id="refs" class="references csl-bib-body hanging-indent">
+
+<div id="ref-paper" class="csl-entry">
+
+Jahn-Eimermacher, Antje, Lukas Klein, and Gunter Grieser. 2025. “A
+Jackknife Approach to Estimate the Prediction Uncertainty from Binary
+Classifiers Under Right-Censoring.” *Statistical Methods in Medical
+Research*, ahead of print. <https://doi.org/10.1177/09622802251393626>.
+
+</div>
+
+</div>

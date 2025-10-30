@@ -1,19 +1,11 @@
 ---
 output: github_document
+bibliography: '`r system.file("REFERENCES.bib", package="IPCWJK")`'
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
-# These are dev dependencies, they are here to be picked up
-# by renv
-if (FALSE) {
-  library(devtools)
-  library(usethis)
-  library(covr)
-  library(pkgdown)
-  library(styler)
-}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -33,6 +25,13 @@ cat(descr$Title)
 cat("\n\n")
 cat(descr$Description)
 ```
+
+We described the methodology implemented in this package in our paper @paper.
+
+Please note that all methods implemented in this package are intended to
+reproduce the results presented in the paper. They may not be suitable for
+other use cases without further validation, especially 
+the employed hyperparameter settings.
 
 The documentation is available at 
 [https://iden-project-uas-darmstadt.github.io/IPCWJK/](
@@ -133,3 +132,5 @@ covr::package_coverage() # to check code coverage
 styler::style_pkg() # to style the code
 lint() # to check the code for linting issues
 ```
+
+# References
