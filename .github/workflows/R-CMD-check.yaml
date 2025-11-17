@@ -45,7 +45,7 @@ jobs:
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update  -y -qq
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-          libcurl4-openssl-dev
+          libcurl4-openssl-dev libfontconfig1-dev
 
       - uses: r-lib/actions/setup-renv@v2
 
