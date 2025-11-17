@@ -1,7 +1,7 @@
 Package: IPCWJK
 Title: Jackknife Approach to Estimate the Prediction Uncertainty from 
         Binary Classifiers under Right-Censoring
-Version: 0.1.1.9000
+Version: 0.1.2
 URL: https://iden-project-uas-darmstadt.github.io/IPCWJK
 Authors@R: c(
     person("Antje", "Jahn-Eimermacher", role = "aut"),
