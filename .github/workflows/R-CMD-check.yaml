@@ -40,12 +40,14 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Install system dependencies
-        if: runner.os == 'Linux'
+      - name: Install system dependencies for devel
+        if: runner.os == 'Linux' && matrix.config.r == 'devel'
         run: |
           sudo DEBIAN_FRONTEND=noninteractive apt-get update  -y -qq
           sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
-          libcurl4-openssl-dev libfontconfig1-dev
+          libcurl4-openssl-dev libfontconfig1-dev libharfbuzz-dev \
+          libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev \
+          libcairo2-dev
 
       - uses: r-lib/actions/setup-renv@v2
 
