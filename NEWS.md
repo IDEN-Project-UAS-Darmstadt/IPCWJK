@@ -1,13 +1,6 @@
 # IPCWJK (development version)
 
-* Suppressed the warning about the non-integer successes in the binomial model
-
-## Minor improvements and bug fixes
-
-* Added references to the paper
-* Improved documentation
-* Fixed CI issues
-* Closes #17, #16, #15, #14, #13, #10
+* Fixed `R-CMD check` workflow for ubuntu-latest (devel)
 
 # IPCWJK 0.1.1.9000
 
